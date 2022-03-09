@@ -1,6 +1,10 @@
-import React from 'react'
+import React, {useEffect} from 'react'
+import { connect, initGame } from '../../services';
 import { buildDeck } from '../../utils';
  
 export default function Field() {
-    return <div></div>
+    useEffect(()=>{
+        connect();
+    },[]);
+    return <button onClick={initGame}>click</button>
 }
