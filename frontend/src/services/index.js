@@ -10,9 +10,21 @@ export const connect = ()=>{
                     'flashsocket'
                 ]},
     );
+    
 }
 
-export const initGame=()=>{
-    console.log('init', socket)
-    socket.emit('init game' ,'teste');
+export const initGame=(callback)=>{
+    socket.on('uuid', data=>{
+        if(callback && typeof callback === 'function'){
+            callback(data.uuid);
+        }
+        else {
+            throw Error("callback must be a function");
+        }
+    });
+
+    socket.emit('init game');
+}
+export const disconnect = () => {
+    socket.disconnect();
 }
