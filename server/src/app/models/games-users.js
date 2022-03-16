@@ -15,11 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       this.belongsTo(models.Games, {foreignKey: 'fk_game_id',as:'fk_game'});
     }
   }
-  Games - Users.init({
+
+  GamesUsers.init({
     
   }, {
     sequelize,
     modelName: 'GamesUsers',
   });
-  return Games - Users;
+  return GamesUsers;
 };

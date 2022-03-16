@@ -27,10 +27,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Users',
   });
-  this.addHook('beforeSave',async (user)=>{
+  Users.addHook('beforeCreate',async (user)=>{
     if(user.password){
       user.password_hash = await bcrypt.hash(user.password, 8);
     }
-  })
+  });
+
   return Users;
 };

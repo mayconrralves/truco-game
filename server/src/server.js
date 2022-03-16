@@ -1,4 +1,4 @@
-import app from './App.mjs';
+import app from './App';
 const PORT = 8000;
 
 app.listen(PORT,()=>{

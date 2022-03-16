@@ -2,8 +2,8 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
-
-import Game from './app/controllers/Game/index.mjs';
+import routes from './routes';
+import Game from './app/controllers/Game';
 
 class App {
     constructor(){
@@ -15,7 +15,7 @@ class App {
         this.configurationWebSocket();
     }
     routes(){
-        
+        this.server.use(routes);
     }
     middlewares(){
         this.server.use(express.json());
