@@ -9,7 +9,6 @@ passport.use('login',new LocalStrategy(
     },
     async (email, password, done)=>{
         try{
-            console.log('1234')
             const user = await Users.findOne({ where: { email }});
             if(!user){
                 return done(null, false, {message: "User not found"});
