@@ -5,7 +5,8 @@ import cors from 'cors';
 import routes from './routes';
 import Game from './app/controllers/Game';
 
-class App {
+
+class ServerApp {
     constructor(){
         this.server = express();
         this.middlewares();
@@ -18,6 +19,7 @@ class App {
         this.server.use(routes);
     }
     middlewares(){
+        this.server.use(express.urlencoded({ extended: false }));
         this.server.use(express.json());
         this.server.use(cors());
     }
@@ -28,4 +30,4 @@ class App {
     }
 }
 
-export default new App().httpServer;
+export default new ServerApp().httpServer;

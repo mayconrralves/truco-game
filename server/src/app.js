@@ -1,6 +1,6 @@
-import app from './App';
+import server from './Server';
 const PORT = 8000;
 
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     console.log(`connect on ${PORT}`);
 });

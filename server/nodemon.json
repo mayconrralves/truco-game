@@ -1,5 +1,6 @@
 {
     "execMap":{
-      "js": "node -r sucrase/register"
+      "js": "node -r sucrase/register",
+      "delay": "1500"
     }
   }
