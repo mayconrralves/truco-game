@@ -1,4 +1,6 @@
 import passport from 'passport';
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
 class SessionController {
     
@@ -13,15 +15,24 @@ class SessionController {
                     }
                     req.login(
                         user,
-                        {session: false},
+                        { session: false },
                         async (error)=>{
                             if(error) return next(error);
-                            const body = {id: user.id, email: user.email };
-                            
+                            const token = jwt.sign(
+                                { id: user.id },
+                                process.env.SECRET_JWT,
+                                {
+                                    expiresIn: '1h'
+                                }      
+                            ); 
+                            const { id, name, email} = user;
                             return res.status(200).json({
-                                message: 'ok',
-                                ...user,
-                            })
+                                id,
+                               name,
+                               email,
+                               token,
+                                
+                            });
                         }
                     );
                 }catch(error){
