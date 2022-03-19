@@ -22,7 +22,6 @@ export const initGame=(callback)=>{
             throw Error("callback must be a function");
         }
     });
-
     socket.emit('init game');
 }
 export const disconnect = () => {
