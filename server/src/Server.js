@@ -3,7 +3,7 @@ import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import routes from './routes';
-import Game from './app/controllers/Game';
+import { initGame } from './config/socketGame';
 
 
 class ServerApp {
@@ -25,7 +25,7 @@ class ServerApp {
     }
     configurationWebSocket(){
         this.io.on('connection',(socket)=>{
-            Game.initGame(socket);
+            initGame(socket);
         });
     }
 }

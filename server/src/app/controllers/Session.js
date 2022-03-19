@@ -10,14 +10,19 @@ class SessionController {
             async (err, user, info)=>{
                 try{
                     if(err || !user){
-                        const error = new Error('An Error ocurred.');
-                        return next(error);
+                        return res.status(401).json({
+                            error: 'Unauthorized user',
+                        });
                     }
                     req.login(
                         user,
                         { session: false },
                         async (error)=>{
-                            if(error) return next(error);
+                            if(error){
+                                return res.status(401).json({
+                                    error: 'Unauthorized user',
+                                });
+                            }
                             const token = jwt.sign(
                                 { id: user.id },
                                 process.env.SECRET_JWT,
@@ -36,7 +41,9 @@ class SessionController {
                         }
                     );
                 }catch(error){
-                    return next(error);
+                   return res.status(401).json({
+                        error: 'Unauthorized user',
+                    });
                 }
             }
         )(req, res, next);

@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy} from 'passport-local';
 
 import { Users } from '../app/models';
+
 passport.use('login',new LocalStrategy(
     {
         usernameField: 'email',
