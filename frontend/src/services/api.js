@@ -25,6 +25,6 @@ export const signup = async ({username, email, password})=>{
         });
         return data.data;
     }catch(error){
-        return error.data;
+        return error.response.data;
     }
 } 
