@@ -28,7 +28,6 @@ export default function Login() {
                 onSubmit={
                     async (values, actions)=>{
                         const data = await signin({...values});
-                        console.log(data)
                         if(data.error){
                             alert('error');
                         } 
