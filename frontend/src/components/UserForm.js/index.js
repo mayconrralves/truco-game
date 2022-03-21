@@ -1,9 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
  
-export default function UserForm({ setUser, isUpdate, sendData }) {
+function UserForm({ setUser, isUpdate, sendData }) {
     
     return (
         <div>
@@ -76,3 +77,18 @@ export default function UserForm({ setUser, isUpdate, sendData }) {
         </div>
     )
 }
+
+UserForm.propTypes = {
+    isUpdate: PropTypes.bool,
+    setUser: function(props, propName, componentName){
+        if (  props[propName] && typeof props[propName] !== 'function' ){
+            return new Error("Error,  setUser must be a fuction type");
+        }
+        if((props['isUpdate']== true)){
+            return new Error("Error, When isUpdate is passed to props, setUser must be declared.");
+        }
+    },
+    sendData: PropTypes.func.isRequired,
+};
+
+export default UserForm;

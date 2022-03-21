@@ -7,5 +7,5 @@ import { signup } from '../../services/api';
  
 export default function Signup() {
   
-    return   <UserForm  sendData={signup} />
+    return   <UserForm sendData={signup} />
 }
