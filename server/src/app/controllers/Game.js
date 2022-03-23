@@ -3,7 +3,7 @@
 class Game{
 
     store(req,res){
-
+        
     }
 }
 

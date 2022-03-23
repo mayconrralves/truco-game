@@ -13,7 +13,6 @@ routes.get('/', (req, res)=>{
 routes.post('/user/create', UsersController.store);
 routes.post('/auth/login', SessionController.store);
 routes.use(auth);
-routes.post('/game/create')
 routes.get('/teste', (req, res)=>{
     res.status(200).end();
 });

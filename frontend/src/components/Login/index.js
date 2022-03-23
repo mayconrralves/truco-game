@@ -1,4 +1,5 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { signin } from '../../services/api';
@@ -6,6 +7,13 @@ import { AuthContext } from '../AuthContext';
 
 export default function Login() {
     const [user, setUser ] = useContext(AuthContext).user;
+    const navigate = useNavigate();
+    const location = useLocation();
+    const login = (data)=>{
+        const from = location.state?.from?.pathname || '/game';
+        setUser(data);
+        navigate(from, {replace: true});
+    }
     return (
         <div>
             <Formik
@@ -30,8 +38,9 @@ export default function Login() {
                         const data = await signin({...values});
                         if(data.error){
                             alert('error');
-                        } 
-                        else  setUser(data);
+                        } else {
+                            login(data);
+                        }
                     }
                 }
             >
