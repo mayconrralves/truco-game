@@ -1,19 +1,23 @@
-import React, { useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { signin } from '../../services/api';
 import { AuthContext } from '../AuthContext';
+import { useLocation, useNavigate } from 'react-router';
 
 export default function Login() {
-    const [user, setUser ] = useContext(AuthContext).user;
+    
+    const {user, signin, error, getUser } = useContext(AuthContext);
+
     const navigate = useNavigate();
     const location = useLocation();
-    const login = (data)=>{
-        const from = location.state?.from?.pathname || '/game';
-        setUser(data);
-        navigate(from, {replace: true});
-    }
+    useEffect(()=>{
+        
+        if(user){
+            navigate('/game', { replace: true});
+        } else {
+            getUser();
+        }
+    },[user]);
     return (
         <div>
             <Formik
@@ -34,13 +38,10 @@ export default function Login() {
                     }
                 )}
                 onSubmit={
-                    async (values, actions)=>{
-                        const data = await signin({...values});
-                        if(data.error){
-                            alert('error');
-                        } else {
-                            login(data);
-                        }
+                    async (values)=>{
+                        await signin({...values});
+                        const from = location.state?.from?.pathname || '/game';
+                        navigate(from, {replace: true});
                     }
                 }
             >

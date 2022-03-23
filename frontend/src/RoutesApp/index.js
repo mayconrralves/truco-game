@@ -1,4 +1,4 @@
-import React, {useContext } from "react";
+import React from "react";
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 
 import Field from "../components/Field";
@@ -14,7 +14,7 @@ export default function RoutesApp(){
             <Routes>
                 <Route>
                     <Route index path='/' element={<Login/>}/>
-                    <Route index path='/login' element={<Login/>}/>
+                    <Route path='/login' element={<Login/>}/>
                     <Route path='/signup' element={<Signup/>}/>
                     <Route path="/game" element={
                         <ProtectedRouter>

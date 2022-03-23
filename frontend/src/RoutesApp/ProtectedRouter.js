@@ -4,7 +4,7 @@ import { AuthContext } from "../components/AuthContext";
 
 export default function ProtectedRouter({ children }){
 
-    const [user, _] = useContext(AuthContext).user;
+    const { user } = useContext(AuthContext);
     const location = useLocation();
 
     return !user?.token ? (
