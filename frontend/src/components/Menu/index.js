@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { StyleMenu } from "./styles";
 export default function Menu(){
 
     const {user, getUser} = useContext(AuthContext);
@@ -15,9 +16,11 @@ export default function Menu(){
     const changeRegister = ()=>{
         setRegister(!register);
     }
+    const clickSair =()=>{
+    }
     return( 
         <div>
-            <nav>
+            <StyleMenu>
                 {
                     !user?.token ? <>
                        { register && <Link to="/" onClick={changeRegister}>Entrar</Link>}
@@ -25,11 +28,12 @@ export default function Menu(){
                     </> : (
                         <>
                         <Link to='/profile'>Profile</Link>
-                        <Link to='/game'>Iniciar Jogo</Link>  
+                        <Link to='/game'>Iniciar Jogo</Link>
+                        <button onClick={clickSair}> Sair </button>  
                         </>
                     )
                 }
-            </nav>
+            </StyleMenu>
 
         </div>
     )

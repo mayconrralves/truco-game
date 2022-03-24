@@ -33,12 +33,12 @@ export default function Login() {
                                   .email('check your email')
                                   .required("email is required"),
                         password: Yup.string()
-                                     .length(6, 'must have 6 or more caracteres')
                                      .required('Password is required')
                     }
                 )}
                 onSubmit={
                     async (values)=>{
+                        console.log('teste',location )
                         await signin({...values});
                         const from = location.state?.from?.pathname || '/game';
                         navigate(from, {replace: true});
@@ -55,5 +55,5 @@ export default function Login() {
                 }
             </Formik>
         </div>
-    )
+    );
 }

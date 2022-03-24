@@ -1,12 +1,15 @@
 import React from 'react';
 import Menu from '../Menu';
-
+import { StyledHeader } from './styles';
 export default function Header(){
 
     return (
-        <header>
-            Truco
-            <Menu/>
-        </header>
+        <StyledHeader>
+            <div>
+                <h1>Truco Mineiro</h1>
+                <Menu/>
+            </div>
+                <hr/>
+        </StyledHeader>
     )
 }

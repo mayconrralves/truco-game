@@ -12,6 +12,7 @@ export default function Auth({ children }) {
    
 
     const signin = async ({ email, password } )=>{
+        console.log(email)
         const data = await signinApi({ email, password});
                         if(data.error){
                             setError(data.error);
