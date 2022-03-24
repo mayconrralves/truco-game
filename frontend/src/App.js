@@ -5,11 +5,10 @@ import { GlobalStyle } from './styles';
 //main
 function App() {
   return (
-    <GlobalStyle>
-      <div className="App">
-                <Outlet/>
+    <div className="App">
+        <GlobalStyle/>
+        <Outlet/>
       </div>
-    </GlobalStyle>
   );
 }
 
