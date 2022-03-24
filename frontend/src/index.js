@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Auth from './components/AuthContext';
+import RoutesApp from './RoutesApp';
 
 ReactDOM.render(
   <React.StrictMode>
     <Auth>
+      <RoutesApp/>
       <App />
     </Auth>
   </React.StrictMode>,

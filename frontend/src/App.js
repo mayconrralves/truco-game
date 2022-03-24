@@ -1,17 +1,14 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import Footer from './components/Footer';
 import Header from './components/Header';
-import Login from './components/Login';
-import RoutesApp from './RoutesApp';
+
 
 //main
 function App() {
   return (
     <div className="App">
-          <Header/>
-          <RoutesApp/>
-          <Footer />
+          <Outlet/>
     </div>
   );
 }
