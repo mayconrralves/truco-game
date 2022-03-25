@@ -14,9 +14,10 @@ export const StyledHeader= styled.header`
         align-items: baseline;
         h1 {
             color: #a1ff0a;
-            width: 250px;
-            font-size: 2.5em;
+            width: 300px;
+            font-size: 3em;
             text-align: center;
+            margin: 60px;
         }
 
     }
