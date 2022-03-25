@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../AuthContext';
 import { useLocation, useNavigate } from 'react-router';
+import { LoginStyle } from './styles';
 
 export default function Login() {
     
@@ -19,7 +20,7 @@ export default function Login() {
         }
     },[user]);
     return (
-        <div>
+        <LoginStyle>
             <Formik
                 initialValues={
                     {
@@ -54,6 +55,6 @@ export default function Login() {
             
                 }
             </Formik>
-        </div>
+        </LoginStyle>
     );
 }

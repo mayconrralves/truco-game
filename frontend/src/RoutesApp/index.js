@@ -8,12 +8,14 @@ import Header from "../components/Header";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import ProtectedRouter from "./ProtectedRouter";
+import { GlobalStyle } from "./styles";
 
 
 export default function RoutesApp(){
    
     return (
         <BrowserRouter>
+            <GlobalStyle/>
             <Header/>
             <Routes>
                 <Route  path='/' element={<App/>}>   
