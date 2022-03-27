@@ -10,6 +10,18 @@ export const  GlobalStyle = createGlobalStyle`
        
         width: 100vw;
         height: 100vh;
-        background: linear-gradient(180deg, rgba(2,0,36,1) 0%, rgba(40,41,43,1) 100%);
+        background: white;
+    }
+    a {
+        color: #54595F;
+        &:visited {
+            color: #54595F;
+        }
+        &:hover{
+            text-decoration: underline;
+        }
+    }
+    input {
+        color: #54595F;
     }
 `;

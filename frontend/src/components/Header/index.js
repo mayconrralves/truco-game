@@ -9,7 +9,6 @@ export default function Header(){
                 <h1>Truco Mineiro</h1>
                 <Menu/>
             </div>
-                <hr/>
         </StyledHeader>
     )
 }
