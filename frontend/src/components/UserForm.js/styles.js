@@ -11,6 +11,11 @@ export const UserFormStyle = styled.div`
         width: 50%;
         height: 70vh;
         justify-content: center;
+        span {
+            color: red;
+            font-size: 1em;
+            text-align: center;
+        }
         input {
             height: 60px;
         }

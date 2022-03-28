@@ -22,10 +22,10 @@ function UserForm({ setUser, isUpdate, sendData }) {
                 validationSchema={Yup.object().shape(
                     {
                         name: Yup.string()
-                                 .required("nome é obrigatório"),
+                                 .required("Nome é obrigatório"),
                         email: Yup.string()
                                   .email('verifique seu email')
-                                  .required("email é obrigatório"),
+                                  .required("Email é obrigatório"),
                         password: Yup.string()
                                      .length(6, 'A senha deve ter pelo menos 6 ou mais caracteres')
                                      .required('Senha é obrigatória'),
@@ -57,19 +57,19 @@ function UserForm({ setUser, isUpdate, sendData }) {
                 {
                     <Form>
                         <Field type="name" name="name" placeholder="Seu nome"/>
-                        <ErrorMessage name="name" />
+                        <span><ErrorMessage name="name" /></span>
                         <Field type="email" name="email" placeholder="Seu email" />
-                        <ErrorMessage name="email"/>
+                        <span><ErrorMessage name="email"/></span>
                         {
                             isUpdate && <>
                                 <Field type="password" name="oldPassword" placeholder="Senha anterior"/>
-                                <ErrorMessage name="oldPassword"/>
+                                <span><ErrorMessage name="oldPassword"/></span>
                             </>
                         }
-                        <Field type="password" name="password" />
-                        <ErrorMessage name="password" placeholder="Sua senha" />
+                        <Field type="password" name="password" placeholder="Sua Senha"/>
+                        <span><ErrorMessage name="password" placeholder="Sua senha" /></span>
                         <Field type="password" name="confirmPassword" placeholder="Confirme sua senha" />
-                        <ErrorMessage name="confirmPassword"/>
+                        <span><ErrorMessage name="confirmPassword"/></span>
                         <button type="submit">{isUpdate? 'Atualizar' : 'Cadastrar'}</button>
                     </Form>
             
