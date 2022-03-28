@@ -2,12 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
+import { UserFormStyle } from './styles';
 
  
 function UserForm({ setUser, isUpdate, sendData }) {
     
     return (
-        <div>
+        <UserFormStyle>
             <Formik
                 initialValues={
                     {
@@ -74,8 +75,8 @@ function UserForm({ setUser, isUpdate, sendData }) {
             
                 }
             </Formik>
-        </div>
-    )
+        </UserFormStyle>
+    )  
 }
 
 UserForm.propTypes = {
