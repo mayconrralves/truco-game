@@ -23,6 +23,7 @@ export const UserFormStyle = styled.div`
             height: 60px;
             border: none;
             border-radius: 5px;
+            margin-top: 20px;
         }
         
     }
