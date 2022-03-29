@@ -31,15 +31,14 @@ export default function Login() {
                 validationSchema={Yup.object().shape(
                     {
                         email: Yup.string()
-                                  .email('check your email')
-                                  .required("email is required"),
+                                  .email('Verifique seu email')
+                                  .required(""),
                         password: Yup.string()
-                                     .required('Password is required')
+                                     .required('Senha obrigatória')
                     }
                 )}
                 onSubmit={
                     async (values)=>{
-                        console.log('teste',location )
                         await signin({...values});
                         const from = location.state?.from?.pathname || '/game';
                         navigate(from, {replace: true});
@@ -49,7 +48,7 @@ export default function Login() {
                 {
                     <Form>
                         <Field type="email" name="email" placeholder="Seu email" />
-                        <Field type="password" name="password" />
+                        <Field type="password" name="password" placeholder="Sua senha" />
                         <button type="submit">Login</button>
                     </Form>
             

@@ -11,7 +11,7 @@ export const StyledHeader= styled.header`
         justify-content: space-between;
         align-items: baseline;
         h1 {
-            color: #54595F;
+            
             width: 300px;
             font-size: 3em;
             text-align: center;

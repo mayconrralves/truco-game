@@ -16,7 +16,6 @@ export const StyleMenu = styled.nav`
         height: 35px;
         color: white;
         text-align: center;
-        background-color: #54595F;;
         border-radius: 12px;
         font-size: 1.2em;
         border: 0;

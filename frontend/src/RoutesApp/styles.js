@@ -43,4 +43,7 @@ export const  GlobalStyle = createGlobalStyle`
         border-radius: 5px;
         border: none;
     }
+    h1, h2, h3 {
+        color: #54595F;
+    }
 `;
