@@ -1,6 +1,7 @@
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import Users from './Users';
 
 class SessionController {
     

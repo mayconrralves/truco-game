@@ -1,3 +1,4 @@
+import { updateUser } from '../../../../frontend/src/services/api';
 import  {Users} from '../models';
 
 class UsersController {
@@ -12,9 +13,32 @@ class UsersController {
         const {name, email } = await Users.create({
             ...req.body,
         });
-        res.status(200).json({
+        return res.status(200).json({
             name,
             email,
+        });
+    }
+    async update (req, res){
+        const { userId } = req;
+        const user = await Users.update(req.body, {
+            where: {
+                id: userId,
+            }
+        });
+        const {name, email, id } = await Users.findByPk(userId);
+        return res.status(200).json({
+            id,
+            name,
+            email
+        });
+    }
+    async index(req, res){
+        const { userId } = req;
+        const { name, email, id } = await Users.findByPk(userId);
+        return res.status(200).json({
+          id,
+          name,
+          email,
         });
     }
 }
