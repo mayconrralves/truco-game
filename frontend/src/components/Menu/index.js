@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { StyleMenu } from "./styles";
+
 export default function Menu(){
 
     const {user, getUser, signout} = useContext(AuthContext);

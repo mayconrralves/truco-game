@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { UserFormStyle } from './styles';
 
  
-function UserForm({ setUser, isUpdate, sendData }) {
+function UserForm({ setUser, isUpdate, sendData, onCanceled }) {
     
     return (
         <UserFormStyle>
@@ -71,6 +71,7 @@ function UserForm({ setUser, isUpdate, sendData }) {
                         <Field type="password" name="confirmPassword" placeholder="Confirme sua senha" />
                         <span><ErrorMessage name="confirmPassword"/></span>
                         <button type="submit">{isUpdate? 'Atualizar' : 'Cadastrar'}</button>
+                        { isUpdate && <button type='button' onClick={onCanceled}>Cancelar</button>}
                     </Form>
             
                 }
@@ -85,11 +86,19 @@ UserForm.propTypes = {
         if (  props[propName] && typeof props[propName] !== 'function' ){
             return new Error("Error,  setUser must be a fuction type");
         }
-        if((props['isUpdate']== true)){
-            return new Error("Error, When isUpdate is passed to props, setUser must be declared.");
+        if(props['isUpdate']=== true && typeof props[propName] !== 'function'){
+            return new Error("Error, when isUpdate is passed to props, setUser must be declared.");
         }
     },
     sendData: PropTypes.func.isRequired,
+    onCanceled: function(props, propName, componentName){
+        if(props[propName] && typeof props[propName] !== 'function'){
+            return  new Error("Error, onCanceled must be a function type");
+        }
+        if(props['isUpdate'] === true && typeof props[propName] !== 'function'){
+            return new Error ("Error, when isUpdate is passed to props, onCanceled must be declared.")
+        }
+    }
 };
 
 export default UserForm;

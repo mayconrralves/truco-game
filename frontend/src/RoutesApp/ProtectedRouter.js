@@ -6,9 +6,8 @@ export default function ProtectedRouter({ children }){
 
     const { user } = useContext(AuthContext);
     const location = useLocation();
-
-    return !user?.token ? (
-        <Navigate to='/login' state={{from: location}} replace/>
+    return !user?.token && !location?.pathname ? (
+        <Navigate to='/' replace/>
     ): (
         children
     ) 

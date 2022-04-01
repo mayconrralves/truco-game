@@ -12,7 +12,6 @@ export default function Auth({ children }) {
    
 
     const signin = async ({ email, password } )=>{
-        console.log(email)
         const data = await signinApi({ email, password});
                         if(data.error){
                             setError(data.error);
@@ -31,7 +30,7 @@ export default function Auth({ children }) {
         const data =  JSON.parse(localStorage.getItem(NAME_STORAGE_DATA));
         setUser(data);
     }
-    const values={ user, error, signin, signout, getUser };
+    const values={ user, error, signin, signout, getUser, setUser };
 
     return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }
