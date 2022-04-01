@@ -4,16 +4,16 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import { UserFormStyle } from './styles';
 
- 
-function UserForm({ setUser, isUpdate, sendData, onCanceled }) {
+
+function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
     
     return (
         <UserFormStyle>
             <Formik
                 initialValues={
                     {
-                        name: '',
-                        email: '',
+                        name: user ? user.name : '',
+                        email: user ? user.email: '',
                         password: '',
                         confirmPassword: '',
                         oldPassword: '',
@@ -27,10 +27,8 @@ function UserForm({ setUser, isUpdate, sendData, onCanceled }) {
                                   .email('verifique seu email')
                                   .required("Email é obrigatório"),
                         password: Yup.string()
-                                     .length(6, 'A senha deve ter pelo menos 6 ou mais caracteres')
-                                     .required('Senha é obrigatória'),
+                                     .length(6, 'A senha deve ter pelo menos 6 ou mais caracteres'),
                         confirmPassword: Yup.string()
-                                            .required(" ")
                                             .oneOf([Yup.ref('password')], "Senhas não conferem"),
                         oldPassword: Yup.string()
                                         .when(['password, oldPassword'],{
@@ -43,12 +41,18 @@ function UserForm({ setUser, isUpdate, sendData, onCanceled }) {
                 )}
                 onSubmit={
                     async (values)=>{
-                        const data = await sendData ({...values});
+                        let data;
+                        if(isUpdate){
+                            console.log(values)
+                            data = await sendData({...values, bearerToken: user.token})
+                        }else {
+                            data = await sendData ({...values});
+                        }
                         if(data.error){
                             alert('error');
                         } 
                         else  {
-                            isUpdate && setUser(data);
+                            setUser({...data, token:user.token});
                             alert('Cadastrado')
                         }
                     }
@@ -97,6 +101,17 @@ UserForm.propTypes = {
         }
         if(props['isUpdate'] === true && typeof props[propName] !== 'function'){
             return new Error ("Error, when isUpdate is passed to props, onCanceled must be declared.")
+        }
+    },
+    user: function(props, propName, componentName){
+        if(props[propName] === null) {
+            return new Error("Error, user must not be null");
+        }
+        if(props[propName] && typeof props[propName] !== 'object'){
+            return  new Error("Error, user must be a object type");
+        }
+        if(props['isUpdate'] === true && typeof props[propName] !== 'object'){
+            return new Error ("Error, when isUpdate is passed to props, user must be declared.")
         }
     }
 };
