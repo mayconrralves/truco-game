@@ -20,11 +20,11 @@ class UsersController {
     }
     async update (req, res){
         const { userId } = req;
-        const user = await Users.update(req.body, {
-            where: {
-                id: userId,
-            }
-        });
+        console.log('uuuuu', req.body)
+        const user = await Users.findByPk(userId);
+
+        await user.update(req.body);
+        
         const {name, email, id } = await Users.findByPk(userId);
         return res.status(200).json({
             id,
