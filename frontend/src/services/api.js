@@ -30,7 +30,6 @@ export const signup = async ({username, email, password})=>{
 } 
 
 export const updateUser = async ({name, email, password, bearerToken})=>{
-    console.log(name, bearerToken)
     try{
         const data = await api.patch('/user/update', {
             name,

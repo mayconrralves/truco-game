@@ -6,7 +6,6 @@ import { UserFormStyle } from './styles';
 
 
 function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
-    
     return (
         <UserFormStyle>
             <Formik
@@ -27,23 +26,21 @@ function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
                                   .email('verifique seu email')
                                   .required("Email é obrigatório"),
                         password: Yup.string()
-                                     .length(6, 'A senha deve ter pelo menos 6 ou mais caracteres'),
+                                     .min(6, 'A senha deve ter pelo menos 6 ou mais caracteres'),
                         confirmPassword: Yup.string()
                                             .oneOf([Yup.ref('password')], "Senhas não conferem"),
                         oldPassword: Yup.string()
-                                        .when(['password, oldPassword'],{
+                                        .when('password',{
                                             is: ( password )=> isUpdate && password,
                                             then: schema=> schema.required('É necessário senha anterior'),
                                             otherwise: schema=> schema.notRequired()
-                                        }),
-                                            
+                                        }),          
                     }
                 )}
                 onSubmit={
                     async (values)=>{
                         let data;
                         if(isUpdate){
-                            console.log(values)
                             data = await sendData({...values, bearerToken: user.token})
                         }else {
                             data = await sendData ({...values});
@@ -53,7 +50,6 @@ function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
                         } 
                         else  {
                             setUser({...data, token:user.token});
-                            alert('Cadastrado')
                         }
                     }
                 }

@@ -15,7 +15,6 @@ import ProtectedRouter from "./ProtectedRouter";
 
 
 export default function RoutesApp(){
-   
     return (
         <BrowserRouter>
             <GlobalStyle/>

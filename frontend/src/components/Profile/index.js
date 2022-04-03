@@ -7,17 +7,13 @@ import UserForm from '../UserForm.js'
  
 export default function Profile() {
     const { setUser, user } = useContext(AuthContext);
-    const [userNotEmpty, setUserNotEmpty]= useState(false);
     const navigate = useNavigate();
-    useEffect(()=>{
-        if(user)setUserNotEmpty(!userNotEmpty);
-        console.log('teste')
-    },[user]);
+    
     const onCanceled = () => {
         navigate(-1);
     };
-    console.log(user)
-    return userNotEmpty ?  (
+   
+    return user ? (
         <UserForm 
             isUpdate 
             sendData={updateUser} 
@@ -25,7 +21,7 @@ export default function Profile() {
             user={user} 
             onCanceled={onCanceled}
         />
-    ): (
+    ) : (
         <div>Carregando...</div>
     )
 }
