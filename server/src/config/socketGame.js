@@ -27,7 +27,7 @@ export const initGame=(socket)=>{
     });
     socket.on('list_created_games',()=>{
        const games = listRooms(socket);
-            socket.emit('list_created_games',{
+            socket.emit('list_games',{
                 games,
             });
         });
