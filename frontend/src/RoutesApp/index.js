@@ -11,6 +11,7 @@ import Login from "../components/Login";
 import Profile from "../components/Profile";
 import Signup from "../components/Signup";
 import ProtectedRouter from "./ProtectedRouter";
+import ConfigGame from "../components/ConfigGame";
 
 
 
@@ -31,6 +32,11 @@ export default function RoutesApp(){
                     <Route path='/profile' element={
                         <ProtectedRouter>
                             <Profile />
+                        </ProtectedRouter>
+                    }/>
+                    <Route path='/game' element={
+                        <ProtectedRouter>
+                            <ConfigGame />
                         </ProtectedRouter>
                     }/>
 

@@ -9,11 +9,10 @@ export const connect = ()=>{
                     'polling',
                     'flashsocket'
                 ]},
-    );
-    
+    );  
 }
 
-export const initGame=(callback)=>{
+export const initGame=(callback, id)=>{
     socket.on('uuid', data=>{
         if(callback && typeof callback === 'function'){
             callback(data.uuid);
@@ -22,7 +21,17 @@ export const initGame=(callback)=>{
             throw Error("callback must be a function");
         }
     });
-    socket.emit('init game');
+    socket.emit('create_game', {id });
+}
+export const listGames=(callback)=>{
+    socket.on('list_games', data =>{
+        if(callback && typeof callback === 'function'){
+            callback(data);
+        } else {
+            throw Error("callback must be a function");
+        }
+    });
+    socket.emit('list_created_games');
 }
 export const disconnect = () => {
     socket.disconnect();
