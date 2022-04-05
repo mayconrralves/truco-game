@@ -11,9 +11,10 @@ const listRooms = (socket) =>{
     return rooms;
 }
 export const initGame=(socket)=>{
-    socket.on('create_game',()=>{
+    socket.on('create_game',({ id })=>{
         const uuid = uuid4();
         socket.join(uuid);
+        console.log(id)
         socket.emit('uuid',{
             uuid,
         });
