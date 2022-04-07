@@ -1,5 +1,5 @@
 import {v4 as uuid4} from 'uuid';
-
+import { connectRedis } from '../config/redis';
 
 const listRooms = (socket) =>{
     let rooms = [];
@@ -10,7 +10,9 @@ const listRooms = (socket) =>{
     }
     return rooms;
 }
-export const initGame=(socket)=>{
+export const initGame=async (socket)=>{
+   const clientRedis = await connectRedis();
+   console.log(clientRedis);
     socket.on('create_game',({ id })=>{
         const uuid = uuid4();
         socket.join(uuid);
