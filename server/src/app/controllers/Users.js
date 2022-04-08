@@ -1,5 +1,5 @@
-import { updateUser } from '../../../../frontend/src/services/api';
 import  {Users} from '../models';
+import { Op } from 'sequelize';
 
 class UsersController {
     async store(req, res){
@@ -20,9 +20,20 @@ class UsersController {
     }
     async update (req, res){
         const { userId } = req;
-        console.log('uuuuu', req.body)
         const user = await Users.findByPk(userId);
-
+        if(req.body.email){
+            const otherUser = await Users.findAll({
+               where: {
+                    id: {
+                        [Op.not]: [ userId ],
+                    },
+                    email: req.body.email,
+               }
+            });
+            if(otherUser.length){
+                return res.status(404).json({error:'email already exists'});
+            }
+        }
         await user.update(req.body);
         
         const {name, email, id } = await Users.findByPk(userId);
