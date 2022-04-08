@@ -19,7 +19,7 @@ export default function Field() {
     }
     return (
         <>
-            <button onClick={()=>initGame(getUuid, user.id)}>click</button>
+            <button onClick={()=>initGame(getUuid, user.id, user.name)}>click</button>
             <button onClick={()=>listGames(listActiveGames)}>click</button>
         </>
     )

@@ -12,7 +12,7 @@ export const connect = ()=>{
     );  
 }
 
-export const initGame=(callback, id)=>{
+export const initGame=(callback, id, name)=>{
     socket.on('uuid', data=>{
         if(callback && typeof callback === 'function'){
             callback(data.uuid);
@@ -21,7 +21,7 @@ export const initGame=(callback, id)=>{
             throw Error("callback must be a function");
         }
     });
-    socket.emit('create_game', {id });
+    socket.emit('create_game', { id, name });
 }
 export const listGames=(callback)=>{
     socket.on('list_games', data =>{

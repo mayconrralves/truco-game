@@ -26,7 +26,6 @@ export default function Auth({ children }) {
     const getUser = ()=> {
         const data =  JSON.parse(localStorage.getItem(NAME_STORAGE_DATA));
         setUser(data);
- 
     }
     const values={ user, signin, signout, getUser, setUser };
 

@@ -7,14 +7,14 @@ import { LoginStyle } from './styles';
 
 export default function Login() {
     
-    const {user, signin, getUser } = useContext(AuthContext);
+    const {user, signin } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     useEffect(()=>{
         if(user){
             navigate('/game', { replace: true});
         } 
-    },[user]);
+    },[user, navigate]);
     return (
         <LoginStyle>
             <Formik
