@@ -12,16 +12,18 @@ const listRooms = (socket) =>{
 }
 export const initGame=async (socket)=>{
    const clientRedis = await connectRedis();
-   console.log(clientRedis);
-    socket.on('create_game',({ id })=>{
+    socket.on('create_game',async ({ id, name, nameRoom })=>{
         const uuid = uuid4();
         socket.join(uuid);
+        await clientRedis.set(id, name);
+        await clientRedis.set(uuid, nameRoom)
         socket.emit('uuid',{
             uuid,
         });
-    socket.on('join_game', ({ uuid, id })=>{
+    socket.on('join_game', async ({ uuid, id, name })=>{
         const numbersUsers = socket.adapter.rooms.get(uuid).size;
         if(numbersUsers < 2){
+            await clientRedis.set(id, name);
             socket.to(uuid).emit('success_join', { uuid });
         } else {
             socket.emit('full_game');
@@ -33,5 +35,12 @@ export const initGame=async (socket)=>{
                 games,
             });
         });
+    });
+    socket.on('end_game', async ({ uuid, id})=> {
+        await clientRedis.del(uuid);
+        await clientRedis.del(id);
+    });
+    socket.on('disconnect', ()=>{
+        
     });
 }

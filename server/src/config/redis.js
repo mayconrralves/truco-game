@@ -8,6 +8,7 @@ export const connectRedis = async () => {
                 host: 'localhost',
                 port: 6379
             },
+            username: 'default',
             password: 'redisdb'
         }
     );
