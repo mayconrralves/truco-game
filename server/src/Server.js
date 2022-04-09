@@ -25,7 +25,7 @@ class ServerApp {
     }
     configurationWebSocket(){
         this.io.on('connection',(socket)=>{
-            initGame(socket);
+            initGame(socket, this.io);
         });
     }
 }
