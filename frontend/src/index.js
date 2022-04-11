@@ -4,12 +4,15 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Auth from './components/AuthContext';
 import RoutesApp from './RoutesApp';
+import Game from './components/GameContext';
 
 ReactDOM.render(
   <React.StrictMode>
     <Auth>
-      <RoutesApp/>
-      <App />
+      <Game>
+        <RoutesApp/>
+        <App />
+      </Game>
     </Auth>
   </React.StrictMode>,
   document.getElementById('root')

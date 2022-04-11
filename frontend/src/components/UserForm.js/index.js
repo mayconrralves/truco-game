@@ -11,7 +11,7 @@ function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
             <Formik
                 initialValues={
                     {
-                        name: user ? user.name : '',
+                        name: '' || user.name,
                         email: user ? user.email: '',
                         password: '',
                         confirmPassword: '',

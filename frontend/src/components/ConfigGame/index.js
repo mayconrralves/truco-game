@@ -1,32 +1,32 @@
-import React, {useContext, useEffect, useState} from 'react'
-
+import React, {useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../AuthContext'; 
-import { connect, initGame, listGames } from '../../services/socket';
+import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
 
 export default function ConfigGame(){
-    const [ uuid, setUuid] = useState(null);
     const { user } = useContext(AuthContext);
-    const [ games, setGames ] = useState([]);
-    const [connected, setConnected ] = useState(false);
+    const { socket, uuid, games } = useContext(GameContext);
+    const [loaded, setLoaded ] = useState(false);
     useEffect(()=>{
-        connect(setConnected);
-    },[]);
+        console.log('executou')
+        if(!loaded) socket.emit('list_created_games');
+        else setLoaded(true);
+    
+    }, [loaded]);
+ 
 
-    const getUuid = (uuid)=>{
-        setUuid(uuid);
+    const initGame = () =>{
+        socket.emit('create_game', {
+            id: user.id,
+            name: user.name
+        });
     }
-    const listActiveGames= (data)=> {
-        if(data.games && data.games.length){
-            setGames(data.games);
-        }
-    }
+    console.log(games);
     return (
         <>
-        <button onClick={()=>initGame(getUuid, user.id, user.name)}>click</button>
-        <button onClick={()=>listGames(listActiveGames)}>list</button>
+            <button onClick={initGame}>click</button>
          {
-            connected && <ListGames games={games} setGames={setGames}/>
+           // connected && <ListGames games={games} />
          }
         </>
     );

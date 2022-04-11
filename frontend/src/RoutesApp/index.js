@@ -12,8 +12,6 @@ import Signup from "../components/Signup";
 import ProtectedRouter from "./ProtectedRouter";
 import ConfigGame from "../components/ConfigGame";
 
-
-
 export default function RoutesApp(){
     return (
         <BrowserRouter>
