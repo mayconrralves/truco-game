@@ -1,6 +1,7 @@
 import {v4 as uuid4} from 'uuid';
 import { connectRedis } from '../config/redis';
 
+let i = 0;
 const listRooms = (socket) =>{
     let rooms = [];
     for(let room of socket.adapter.rooms.keys()){
@@ -17,8 +18,11 @@ export const initGame=async (socket, io)=>{
         socket.join(uuid);
         await clientRedis.set(id, name);
         await clientRedis.set(uuid, name);
-        socket.emit('uuid',{
-            uuid,
+        socket.emit('room_uuid',{
+            game: {
+                room: uuid,
+                name,
+            }
         });
     });
 
@@ -39,6 +43,7 @@ export const initGame=async (socket, io)=>{
                 const name = await clientRedis.get(room);
                 games.push({name, room});
             }
+            console.log('games', i++);
             io.to(socket.id).emit('list_games',{  
                 games,
             });
@@ -49,6 +54,6 @@ export const initGame=async (socket, io)=>{
         await clientRedis.del(id);
     });
     socket.on('disconnect', ()=>{
-        console.log('desconectado');
+        console.log('desconectado', socket.id);
     });
 }
