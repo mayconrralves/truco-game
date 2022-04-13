@@ -25,6 +25,11 @@ export default function Game({children}){
          socket.on('list_games', data=>{
             setGames(data.games);
          });
+         socket.on('removed_uuid',({uuid})=>{
+            const draftGames = games.filter((game)=> game.uuid !== uuid);
+            setGames(draftGames);
+            
+         });
        }
    },[socket]);
    //events

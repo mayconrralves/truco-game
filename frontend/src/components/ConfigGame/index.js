@@ -8,7 +8,6 @@ export default function ConfigGame(){
     const { socket, uuid, games } = useContext(GameContext);
     const [loaded, setLoaded ] = useState(false);
     useEffect(()=>{
-        console.log('executou')
         if(!loaded) socket.emit('list_created_games');
         else setLoaded(true);
     
@@ -21,13 +20,12 @@ export default function ConfigGame(){
             name: user.name
         });
     }
-    console.log(games);
     return (
         <>
             <button onClick={initGame}>click</button>
-         {
-           // connected && <ListGames games={games} />
-         }
+        
+          <ListGames games={games} />
+         
         </>
     );
 }
