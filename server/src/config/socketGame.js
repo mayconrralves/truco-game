@@ -14,11 +14,18 @@ const listRooms = (socket) =>{
 export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
     socket.on('create_game',async ({ id, name })=>{
+        const uuidExists = await clientRedis.get(socket.id);
+        if(uuidExists){
+            socket.emit('exists_uuid',{
+                uuid: uuidExists
+            });
+            return;
+        }
         const uuid = uuid4();
         socket.join(uuid);
-        await clientRedis.set(id, name);
+        await clientRedis.set(socket.id, uuid);
         await clientRedis.set(uuid, name);
-        socket.emit('room_uuid',{
+        socket.broadcast.emit('room_uuid',{
             game: {
                 room: uuid,
                 name,
@@ -43,17 +50,22 @@ export const initGame=async (socket, io)=>{
                 const name = await clientRedis.get(room);
                 games.push({name, room});
             }
-            console.log('games', i++);
             io.to(socket.id).emit('list_games',{  
                 games,
             });
     });
 
-    socket.on('end_game', async ({ uuid, id})=> {
+    socket.on('end_game', async ({ uuid})=> {
         await clientRedis.del(uuid);
-        await clientRedis.del(id);
+        await clientRedis.del(socket.id);
     });
-    socket.on('disconnect', ()=>{
-        console.log('desconectado', socket.id);
+    socket.on('disconnect', async()=>{
+        const uuid = await clientRedis.get(socket.id);
+        await clientRedis.del(uuid);
+        await clientRedis.del(socket.id);
+        console.log('desconectado', socket.id, uuid);
+        socket.broadcast.emit('removed_uuid', {
+            uuid
+        })
     });
 }
