@@ -1,7 +1,7 @@
 import {v4 as uuid4} from 'uuid';
 import { connectRedis } from '../config/redis';
 
-let i = 0;
+
 const listRooms = (socket) =>{
     let rooms = [];
     for(let room of socket.adapter.rooms.keys()){
@@ -33,11 +33,10 @@ export const initGame=async (socket, io)=>{
         });
     });
 
-    socket.on('join_game', async ({ uuid, id, name })=>{
+    socket.on('join_game', async ({ uuid, name })=>{
         const numbersUsers = socket.adapter.rooms.get(uuid).size;
         if(numbersUsers < 2){
-            await clientRedis.set(id, name);
-            socket.to(uuid).emit('success_join', { uuid });
+            socket.to(uuid).emit('success_join', { uuid, name });
         } else {
             socket.emit('full_game');
         }
@@ -50,19 +49,23 @@ export const initGame=async (socket, io)=>{
                 const name = await clientRedis.get(room);
                 games.push({name, room});
             }
+            console.log('list games', games);
             io.to(socket.id).emit('list_games',{  
                 games,
             });
     });
 
-    socket.on('end_game', async ({ uuid})=> {
+    socket.on('end_game', async ({ uuid })=> {
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
     });
+
     socket.on('disconnect', async()=>{
         const uuid = await clientRedis.get(socket.id);
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
+        const rooms = listRooms(socket);
+        console.log(rooms)
         console.log('desconectado', socket.id, uuid);
         socket.broadcast.emit('removed_uuid', {
             uuid

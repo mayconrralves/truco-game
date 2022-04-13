@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-export default function ListGames({ games}){
+export default function ListGames({ games, update}){
     
 
     const printListGame = () => {
@@ -15,7 +15,7 @@ export default function ListGames({ games}){
     }
     return  (
         <ul>
-            { games.length ? printListGame() : <>Não há jogos</> }
+            { games.length ? printListGame() : <>Não há jogos. <button onClick={update}>Atualize a lista</button></> }
         </ul>
     )
 }

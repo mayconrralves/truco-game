@@ -7,32 +7,32 @@ export const GameContext = React.createContext(null);
 export default function Game({children}){
    const [socket, setSocket ] = useState(null);
    const [uuid, setUuid] = useState(null);
+   const [connection, setConnection ] = useState(false);
    const [games, setGames ] = useState([]);
-
     useEffect(()=>{
        if(!socket){
          const connected = connect();
-         setSocket(connected);
-      }
-
-      else{
+         connected.on('connect',()=>{
+            setConnection(true);
+         });
          // create game
-         socket.on('room_uuid', data=>{
+         connected.on('room_uuid', data=>{
             setUuid(data.game.room);
             setGames(games=>[...games, data.game]);
          });
          //list of games created
-         socket.on('list_games', data=>{
+         connected.on('list_games', data=>{
             setGames(data.games);
          });
-         socket.on('removed_uuid',({uuid})=>{
+         connected.on('removed_uuid',({uuid})=>{
             const draftGames = games.filter((game)=> game.uuid !== uuid);
             setGames(draftGames);
-            
          });
-       }
+            setSocket(connected);
+      }
+      
    },[socket]);
    //events
-    const values = {socket, uuid, games};
+    const values = { socket, uuid, games, connection };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }
