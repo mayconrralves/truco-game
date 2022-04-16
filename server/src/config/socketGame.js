@@ -25,6 +25,9 @@ export const initGame=async (socket, io)=>{
         socket.join(uuid);
         await clientRedis.set(socket.id, uuid);
         await clientRedis.set(uuid, name);
+        io.to(socket.id).emit('created_game', {
+            room: uuid,
+        });
         socket.broadcast.emit('room_uuid',{
             game: {
                 room: uuid,
@@ -43,12 +46,17 @@ export const initGame=async (socket, io)=>{
         }
     });
 
-    socket.on('list_created_games',async ()=>{
+    socket.on('list_created_games',async ({ uuid })=>{
        const rooms = listRooms(socket);
        const games = [];
             for(let room of rooms){
-                const name = await clientRedis.get(room);
-                games.push({name, room});
+                console.log(room,uuid)
+                if(uuid === room){
+                    continue
+                }else {
+                    const name = await clientRedis.get(room);
+                    games.push({name, room});
+                }
             }
             console.log('list games', games);
             io.to(socket.id).emit('list_games',{  

@@ -4,19 +4,21 @@ import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
 import { ConfigGameStyle } from './styles';
 
-const emitEventListCreatedGames = (socket)=>{
-   socket.emit('list_created_games');
-}
 
+const emitEventListCreatedGames = (socket, uuid)=>{
+    socket.emit('list_created_games', { uuid });
+}
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
     const { socket, uuid, games, connection } = useContext(GameContext);
     const [loaded, setLoaded] = useState(false);
+    console.log(uuid)
     useEffect(()=>{
         if(connection && !loaded){ 
             setLoaded(true);
         } else if(loaded ) {
-            emitEventListCreatedGames(socket);
+            console.log('teste')
+            emitEventListCreatedGames(socket, uuid);
         }
         
     }, [connection, loaded]);
@@ -27,11 +29,10 @@ export default function ConfigGame(){
             name: user.name
         });
     }
-    console.log(uuid)
     return (
         <ConfigGameStyle o>
             <h2>Salas</h2>
-           { <button onClick={initGame}>Criar uma sala</button>}
+           { !uuid && <button onClick={initGame}>Criar uma sala</button>}
             <div className='list-games'>
                 {loaded && <ListGames games={games} update={()=>emitEventListCreatedGames(socket)}/>}
             </div>

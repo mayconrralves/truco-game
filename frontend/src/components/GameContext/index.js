@@ -9,15 +9,19 @@ export default function Game({children}){
    const [uuid, setUuid] = useState(null);
    const [connection, setConnection ] = useState(false);
    const [games, setGames ] = useState([]);
-    useEffect(()=>{
-       if(!socket){
+   useEffect(()=>{
+      if(!socket){
          const connected = connect();
          connected.on('connect',()=>{
             setConnection(true);
          });
-         // create game
-         connected.on('room_uuid', data=>{
-            setUuid(data.game.room);
+         //created game
+         connected.on('created_game', data=>{
+            console.log('data.room')
+            setUuid(data.room);
+         });
+         // created game of other user
+          connected.on('room_uuid', data=>{
             setGames(games=>[...games, data.game]);
          });
          //list of games created
@@ -29,9 +33,8 @@ export default function Game({children}){
             setGames(draftGames);
          });
             setSocket(connected);
-      }
-      
-   },[socket]);
+         }
+      });
    //events
     const values = { socket, uuid, games, connection };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
