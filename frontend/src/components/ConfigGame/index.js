@@ -2,6 +2,7 @@ import React, {useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../AuthContext'; 
 import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
+import { ConfigGameStyle } from './styles';
 
 const emitEventListCreatedGames = (socket)=>{
    socket.emit('list_created_games');
@@ -26,12 +27,14 @@ export default function ConfigGame(){
             name: user.name
         });
     }
+    console.log(uuid)
     return (
-        <>
-            <button onClick={initGame}>click</button>
-        
-          {loaded && <ListGames games={games} update={()=>emitEventListCreatedGames(socket)}/>}
-         
-        </>
+        <ConfigGameStyle o>
+            <h2>Salas</h2>
+           { <button onClick={initGame}>Criar uma sala</button>}
+            <div className='list-games'>
+                {loaded && <ListGames games={games} update={()=>emitEventListCreatedGames(socket)}/>}
+            </div>
+        </ConfigGameStyle>
     );
 }

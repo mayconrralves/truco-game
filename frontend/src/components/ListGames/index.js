@@ -1,21 +1,21 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { ListGamesStyle } from "./styles";
 
 export default function ListGames({ games, update}){
     
-
+   
     const printListGame = () => {
         return games.map((game,i)=>{
             return (
-                <li key={'list_games '+ i}>
-                        <span>Name: </span><span>{game.name}</span>
-                        <span>Game: </span><span>{game.room}</span>
+                <li key={'list_games '+ i} id={game.room}>
+                    {game.room} por {game.name}
                 </li>
             )
         })
     }
     return  (
-        <ul>
-            { games.length ? printListGame() : <>Não há jogos. <button onClick={update}>Atualize a lista</button></> }
-        </ul>
+        <ListGamesStyle>
+            { games.length ? printListGame() : <li>Não há jogos. <button onClick={update}>Atualize a lista</button></li> }
+        </ListGamesStyle>
     )
 }

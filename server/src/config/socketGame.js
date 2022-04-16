@@ -13,7 +13,7 @@ const listRooms = (socket) =>{
 }
 export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
-    socket.on('create_game',async ({ id, name })=>{
+    socket.on('create_game',async ({ id, name, username })=>{
         const uuidExists = await clientRedis.get(socket.id);
         if(uuidExists){
             socket.emit('exists_uuid',{
@@ -29,6 +29,7 @@ export const initGame=async (socket, io)=>{
             game: {
                 room: uuid,
                 name,
+                username,
             }
         });
     });

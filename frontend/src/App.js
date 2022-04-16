@@ -5,10 +5,9 @@ import { Outlet } from 'react-router';
 //main
 function App() {
   return (
-    <div className="App">
-        
+    <main className="App">
         <Outlet/>
-      </div>
+      </main>
   );
 }
 

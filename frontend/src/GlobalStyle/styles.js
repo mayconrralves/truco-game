@@ -38,12 +38,17 @@ export const  GlobalStyle = createGlobalStyle`
     button {
         background-color: #e63946;
         color: white;
-        font-size: 1.4em;
         font-weight: bold;
         border-radius: 5px;
         border: none;
     }
     h1, h2, h3 {
         color: #54595F;
+    }
+    main {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
     }
 `;
