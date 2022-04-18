@@ -21,6 +21,7 @@ export const LoginStyle = styled.div`
             width: 100%;
             height: 60px;
             margin-top: 10px;
+            font-size: 1.4em;
             
         }
     }
