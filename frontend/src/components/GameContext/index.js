@@ -17,7 +17,6 @@ export default function Game({children}){
          });
          //created game
          connected.on('created_game', data=>{
-            console.log('data.room')
             setUuid(data.room);
          });
          // created game of other user

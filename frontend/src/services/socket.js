@@ -15,7 +15,6 @@ export const connect = ()=>{
             return socket;
 
         }catch(error){
-            console.error(error);
             return error;
         }
 }

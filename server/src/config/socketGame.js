@@ -46,11 +46,11 @@ export const initGame=async (socket, io)=>{
         }
     });
 
-    socket.on('list_created_games',async ({ uuid })=>{
+    socket.on('list_created_games',async ()=>{
        const rooms = listRooms(socket);
        const games = [];
+            const uuid = await clientRedis.get(socket.id)
             for(let room of rooms){
-                console.log(room,uuid)
                 if(uuid === room){
                     continue
                 }else {
@@ -58,7 +58,6 @@ export const initGame=async (socket, io)=>{
                     games.push({name, room});
                 }
             }
-            console.log('list games', games);
             io.to(socket.id).emit('list_games',{  
                 games,
             });
@@ -73,11 +72,8 @@ export const initGame=async (socket, io)=>{
         const uuid = await clientRedis.get(socket.id);
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
-        const rooms = listRooms(socket);
-        console.log(rooms)
-        console.log('desconectado', socket.id, uuid);
         socket.broadcast.emit('removed_uuid', {
             uuid
-        })
+        });
     });
 }

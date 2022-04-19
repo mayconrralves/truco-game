@@ -5,20 +5,18 @@ import ListGames from '../ListGames';
 import { ConfigGameStyle } from './styles';
 
 
-const emitEventListCreatedGames = (socket, uuid)=>{
-    socket.emit('list_created_games', { uuid });
+const emitEventListCreatedGames = (socket)=>{
+    socket.emit('list_created_games');
 }
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
     const { socket, uuid, games, connection } = useContext(GameContext);
     const [loaded, setLoaded] = useState(false);
-    console.log(uuid)
     useEffect(()=>{
         if(connection && !loaded){ 
             setLoaded(true);
-        } else if(loaded ) {
-            console.log('teste')
-            emitEventListCreatedGames(socket, uuid);
+        } else if( loaded ) {
+            emitEventListCreatedGames(socket);
         }
         
     }, [connection, loaded]);
