@@ -9,7 +9,7 @@ import Login from "../components/Login";
 import Profile from "../components/Profile";
 import Signup from "../components/Signup";
 import ProtectedRouter from "./ProtectedRouter";
-import ConfigGame from "../components/ConfigGame";
+import GameRouter from "./GameRouter";
 
 export default function RoutesApp(){
     return (
@@ -24,12 +24,11 @@ export default function RoutesApp(){
                             <Profile />
                         </ProtectedRouter>
                     }/>
-                    <Route path='/game' element={
-                        <ProtectedRouter>
-                            <ConfigGame />
-                        </ProtectedRouter>
-                    }/>
-
+                    <Route path='/game/*' element={
+                         <ProtectedRouter>
+                             <GameRouter />
+                         </ProtectedRouter>
+                    } />     
                 </Route>
             </Routes>
             <Footer />
