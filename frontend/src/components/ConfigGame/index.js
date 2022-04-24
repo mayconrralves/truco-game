@@ -1,10 +1,10 @@
-import React, {useContext, useEffect, useState } from 'react'
+import React, {useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext'; 
 import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
 import ModalGame from '../ModalGame';
 import { ConfigGameStyle } from './styles';
-
 
 const emitEventListCreatedGames = (socket)=>{
     socket.emit('list_created_games');
@@ -15,19 +15,20 @@ export default function ConfigGame(){
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
+    const navigate = useNavigate();
+
     useEffect(()=>{
         if(connection && !loaded){ 
             setLoaded(true);
         } else if( loaded ) {
             emitEventListCreatedGames(socket);
         }
-        
-    }, [connection, loaded]);
+    }, [connection, loaded, socket]);
     
     const initGame = () =>{
         socket.emit('create_game', {
-                id: user.id,
-                name: user.name
+                name: nameRoom,
+                user: user.name
             });
         }
     const initModal = () => {
@@ -44,7 +45,13 @@ export default function ConfigGame(){
             }
            { !uuid && <button onClick={initModal}>Criar uma sala</button>}
             <div className='list-games'>
-                {loaded && <ListGames games={games} update={()=>emitEventListCreatedGames(socket)}/>}
+                {
+                    loaded && <ListGames 
+                                games={games} 
+                                update={()=>emitEventListCreatedGames(socket)}
+                                navigate={navigate}
+                             />
+                }
             </div>
         </ConfigGameStyle>
     );

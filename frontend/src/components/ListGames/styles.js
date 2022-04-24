@@ -10,9 +10,25 @@ export const ListGamesStyle = styled.ul`
         width: 100%;
         display: flex;
         flex-direction: column;
-        font-size: 1.2em;
         justify-content: center;
         align-items: center;
+        p {
+            color: #54595F;
+            font-size: 20px;
+            span {
+                color: rgba(0,0,0, 0.6);
+            }
+            .name-game {
+                color: #54595F;
+                font-size: 1.5em;
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+            .name-user {
+                font-size: 0.9em;
+            }
+        }
         button {
             font-size: 1em;
         }
