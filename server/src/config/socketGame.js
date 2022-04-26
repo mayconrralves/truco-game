@@ -1,6 +1,7 @@
 import {v4 as uuid4} from 'uuid';
 import { connectRedis } from '../config/redis';
 
+const NUM_PLAYERS = 2;
 
 const listRooms = (socket) =>{
     let rooms = [];
@@ -37,11 +38,19 @@ export const initGame=async (socket, io)=>{
         });
     });
 
-    socket.on('join_game', async ({ uuid, name })=>{
-        const numbersUsers = socket.adapter.rooms.get(uuid).size;
-        if(numbersUsers < 2){
-            socket.to(uuid).emit('success_join', { uuid, name });
-        } else {
+    socket.on('join_game', async ({ uuid, user, userId })=>{
+        const numbersUsers = socket.adapter.rooms.get(uuid)?.size ?? 0;
+        if(numbersUsers === 0){
+            socket.emit('room_no_created');
+        }
+        else if(numbersUsers < NUM_PLAYERS){
+            socket.join(uuid);
+            socket.to(uuid).emit('success_join', { uuid, user, userId });
+            if(socket.adapter.rooms.get(uuid).size === NUM_PLAYERS){
+                io.in(uuid).emit('start_game', { uuid });
+            }
+        } 
+        else {
             socket.emit('full_game');
         }
     });

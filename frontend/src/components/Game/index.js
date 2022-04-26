@@ -1,8 +1,18 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { GameContext } from '../GameContext';
 export default function Game(){
+    const  {setStartGame} = useContext(GameContext);
+    const navigate = useNavigate();
     const { room } = useParams();
-    console.log(room);
+    
+    useEffect(()=>{
+        //capture event when back button is clicked
+        window.onpopstate = function (event){
+            setStartGame(false);
+            navigate(-1);
+        }
+    },[navigate, setStartGame]);
     return (
         <div>Game</div>
     )

@@ -11,7 +11,7 @@ const emitEventListCreatedGames = (socket)=>{
 }
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
-    const { socket, uuid, games, connection } = useContext(GameContext);
+    const { socket, uuid, games, connection, playersJoin, startGame } = useContext(GameContext);
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
@@ -24,13 +24,25 @@ export default function ConfigGame(){
             emitEventListCreatedGames(socket);
         }
     }, [connection, loaded, socket]);
-    
+    useEffect(()=>{
+        if(startGame){
+            navigate(`/game/${uuid}`);
+        }
+    }, [ startGame, uuid, navigate ]);
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
                 user: user.name
             });
         }
+    const joinGame = (room=>{
+        const data = {
+            uuid: room,
+            user: user.name,
+            userId: user.id,
+        }
+        socket.emit('join_game', data);
+    });
     const initModal = () => {
         setOpenModal(true);
     }
@@ -50,6 +62,7 @@ export default function ConfigGame(){
                                 games={games} 
                                 update={()=>emitEventListCreatedGames(socket)}
                                 navigate={navigate}
+                                joinGame={joinGame}
                              />
                 }
             </div>
