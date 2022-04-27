@@ -28,6 +28,12 @@ export const ListGamesStyle = styled.ul`
             .name-user {
                 font-size: 0.9em;
             }
+            button {
+                background-color: green;
+                font-size: 0.8em;
+                width: 50px;
+                height: 30px;
+            }
         }
         button {
             font-size: 1em;

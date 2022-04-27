@@ -14,7 +14,7 @@ const listRooms = (socket) =>{
 }
 export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
-    socket.on('create_game',async ({ name, user })=>{
+    socket.on('create_game',async ({ name, user, idUser })=>{
         const uuidExists = await clientRedis.get(socket.id);
         if(uuidExists){
             socket.emit('exists_uuid',{
@@ -25,7 +25,7 @@ export const initGame=async (socket, io)=>{
         const uuid = uuid4();
         socket.join(uuid);
         await clientRedis.set(socket.id, uuid);
-        await clientRedis.set(uuid, JSON.stringify({name, user}));
+        await clientRedis.set(uuid, JSON.stringify({name, user, idUser}));
         io.to(socket.id).emit('created_game', {
             room: uuid,
         });
@@ -45,7 +45,12 @@ export const initGame=async (socket, io)=>{
         }
         else if(numbersUsers < NUM_PLAYERS){
             socket.join(uuid);
-            socket.to(uuid).emit('success_join', { uuid, user, userId });
+            const data = await clientRedis.get(uuid);
+            const room = JSON.parse(data);
+            //send to others clients that a new player has joined
+            socket.to(uuid).emit('success_join', { user, userId, name: room.name, created: false });
+            //return the room creator's data to the client
+            io.to(socket.id).emit('joined', { ...room, created: true });
             if(socket.adapter.rooms.get(uuid).size === NUM_PLAYERS){
                 io.in(uuid).emit('start_game', { uuid });
             }

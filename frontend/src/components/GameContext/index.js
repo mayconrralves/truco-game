@@ -11,6 +11,8 @@ export default function Game({children}){
    const [games, setGames ] = useState([]);
    const [playersJoin, setPlayersJoin ] = useState([]);
    const [ startGame, setStartGame ] = useState(false);
+   
+
    const startSocket = useCallback(()=>{
       //events
       if(!socket){
@@ -29,13 +31,15 @@ export default function Game({children}){
          //added user on room
          connected.on('success_join', data=>{
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
-            console.log(data.uuid)
+         });
+         connected.on('joined',data=>{
+            setPlayersJoin(playersJoin=> [...playersJoin, data ]);
          });
          //list of games created
          connected.on('list_games', data=>{
             setGames(data.games);
          });
-         connected.on('start_game', (data)=>{
+         connected.on('start_game', (data )=>{
             setUuid(data.uuid);
             setStartGame(true);
          });
@@ -50,6 +54,14 @@ export default function Game({children}){
    useEffect(()=>{
       startSocket();   
    },[startSocket]);
-    const values = { socket, uuid, games, connection, playersJoin, startGame, setStartGame };
+    const values = { 
+       socket, 
+       uuid, 
+       games, 
+       connection, 
+       playersJoin, 
+       startGame, 
+       setStartGame,
+    };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }

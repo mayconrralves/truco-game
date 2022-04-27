@@ -11,7 +11,14 @@ const emitEventListCreatedGames = (socket)=>{
 }
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
-    const { socket, uuid, games, connection, playersJoin, startGame } = useContext(GameContext);
+    const { socket, 
+        uuid, 
+        games, 
+        connection, 
+        playersJoin, 
+        startGame, 
+    } = useContext(GameContext);
+
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
@@ -26,13 +33,14 @@ export default function ConfigGame(){
     }, [connection, loaded, socket]);
     useEffect(()=>{
         if(startGame){
-            navigate(`/game/${uuid}`);
+            navigate('/game/start');
         }
     }, [ startGame, uuid, navigate ]);
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
-                user: user.name
+                user: user.name,
+                userId: user.id,
             });
         }
     const joinGame = (room=>{
@@ -46,13 +54,18 @@ export default function ConfigGame(){
     const initModal = () => {
         setOpenModal(true);
     }
+    const onClickButton = ()=> {
+        setOpenModal(false);
+        initGame();
+     }
     return (
         <ConfigGameStyle >
             <h2>Salas</h2>
             { openModal && <ModalGame  
-                                    setNameRoom={setNameRoom} 
-                                    setOpenModal={setOpenModal} 
-                                    initGame={initGame} 
+                                    placeholder='Nome da sala'
+                                    setState={setNameRoom}
+                                    onClickButton={onClickButton}
+                                    buttonDescription='Adiciona Nome'
                             /> 
             }
            { !uuid && <button onClick={initModal}>Criar uma sala</button>}

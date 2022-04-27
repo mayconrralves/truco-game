@@ -6,7 +6,8 @@ export default function GameRouter(){
     return (
         <Routes>
             <Route path='/' element={ <ConfigGame /> } />
-            <Route path=':room' element={ <Game /> } />
+            <Route path='start' element={ <Game /> }/>
+            <Route path=':room'/>
         </Routes>
     )
 }

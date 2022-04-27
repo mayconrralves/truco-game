@@ -1,21 +1,30 @@
 import React from 'react';
 import { ModalGameStyle } from './styles';
 
-export default function ModalGame({ setNameRoom, setOpenModal, initGame }){
+export default function ModalGame({ 
+                                        confirm, 
+                                        placeholder, 
+                                        setState,
+                                        onClickCancelled,
+                                        onClickButton, 
+                                        buttonDescription, 
+                                        labelDescription 
+                                                        }){
    
-    const onChangeUsername = (event)=>{
-        setNameRoom(event.target.value);
-    }
+    const onChangeInput = (event)=>{
+        setState(event.target.value);
+    };
     
-    const onClickButton = ()=> {
-       setOpenModal(false);
-       initGame();
-    }
+    
     return (
         <ModalGameStyle >
             <div>
-                <input onChange={ onChangeUsername } placeholder='Nome da sala'/>
-                <button onClick={onClickButton}>Adiciona nome</button>
+                { confirm && <label>{labelDescription}</label> }
+                { !confirm && <input onChange={ onChangeInput } placeholder={placeholder} /> }
+                <div>
+                      <button onClick={ onClickButton }>{ buttonDescription }</button>
+                      { confirm && <button onClick={ onClickCancelled }>Cancelar</button>}
+                </div>
             </div>
         </ModalGameStyle>
     )

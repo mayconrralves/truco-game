@@ -7,10 +7,10 @@ export default function Game(){
     const { room } = useParams();
     
     useEffect(()=>{
-        //capture event when back button is clicked
+        //capture an event when back button is clicked
         window.onpopstate = function (event){
             setStartGame(false);
-            navigate(-1);
+            //navigate(-1);
         }
     },[navigate, setStartGame]);
     return (
