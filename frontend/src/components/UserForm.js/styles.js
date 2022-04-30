@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const UserFormStyle = styled.div`
+export const UserFormStyle = styled.main`
     width: 100%;
     height: 80vh;
     display: flex;

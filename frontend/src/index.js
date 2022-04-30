@@ -2,20 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Auth from './components/AuthContext';
-import RoutesApp from './RoutesApp';
-import Game from './components/GameContext';
-import { GlobalStyle } from './GlobalStyle/styles';
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <Auth>
-      <Game>
-        <GlobalStyle />
-        <RoutesApp/>
-        <App />
-      </Game>
-    </Auth>
+          <App />
   </React.StrictMode>,
   document.getElementById('root')
 );

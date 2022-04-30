@@ -2,19 +2,13 @@ import React, { useContext, useEffect } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../AuthContext';
-import { useLocation, useNavigate } from 'react-router';
+
 import { LoginStyle } from './styles';
 
 export default function Login() {
     
     const {user, signin } = useContext(AuthContext);
-    const navigate = useNavigate();
-    const location = useLocation();
-    useEffect(()=>{
-        if(user){
-            navigate('/game', { replace: true});
-        } 
-    },[user, navigate]);
+   
     return (
         <LoginStyle>
             <Formik
@@ -37,10 +31,6 @@ export default function Login() {
                 onSubmit={
                     async (values)=>{
                         const error = await signin({...values});
-                        const from = location.state?.from?.pathname || '/game';
-                        if(error === null) {
-                            navigate(from, {replace: true});
-                        }
                     }
                 }
             >

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ConfigGameStyle = styled.div`
+export const ConfigGameStyle = styled.main`
     display: flex;
     width: 80%;
     min-height: 50vh;

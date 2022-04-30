@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { StyleMenu } from "./styles";
 
 export default function Menu(){
 
     const {user, getUser, signout} = useContext(AuthContext);
-    const navigate = useNavigate();
     const [register, setRegister] = useState(false);
 
     useEffect(()=>{
@@ -20,7 +19,6 @@ export default function Menu(){
     }
     const clickSair =()=>{
         signout();
-        navigate('/')
     }
     return( 
         <div>
