@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { AuthContext } from '../AuthContext';
@@ -8,7 +9,7 @@ import { LoginStyle } from './styles';
 export default function Login() {
     
     const {user, signin } = useContext(AuthContext);
-   
+    const history = useHistory();
     return (
         <LoginStyle>
             <Formik
@@ -31,6 +32,7 @@ export default function Login() {
                 onSubmit={
                     async (values)=>{
                         const error = await signin({...values});
+                        history.push('/game');
                     }
                 }
             >

@@ -1,8 +1,10 @@
 import React from "react";
 import { Route, Switch } from 'react-router-dom';
+import ConfigGame from "../components/ConfigGame";
 
 import Login from "../components/Login";
 import Signup from "../components/Signup";
+import ProtectedRoute from "./ProtectedRoute";
 
 export default function RoutesApp(){
     return (
@@ -18,6 +20,9 @@ export default function RoutesApp(){
                     <Route path='/signup' exact >
                         <Signup />
                     </Route>
+                    <ProtectedRoute path='/game' exact>
+                        <ConfigGame />
+                    </ProtectedRoute>
                     {/* <Route path='/signup' element={<Signup/>}/>
                     <Route path='/profile' element={
                         <ProtectedRouter>

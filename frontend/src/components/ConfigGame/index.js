@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../AuthContext'; 
 import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
@@ -22,7 +21,7 @@ export default function ConfigGame(){
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
-    const navigate = useNavigate();
+   
 
     useEffect(()=>{
         if(connection && !loaded){ 
@@ -31,11 +30,7 @@ export default function ConfigGame(){
             emitEventListCreatedGames(socket);
         }
     }, [connection, loaded, socket]);
-    useEffect(()=>{
-        if(startGame){
-            navigate('/game/start');
-        }
-    }, [ startGame, uuid, navigate ]);
+ 
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
@@ -74,7 +69,6 @@ export default function ConfigGame(){
                     loaded && <ListGames 
                                 games={games} 
                                 update={()=>emitEventListCreatedGames(socket)}
-                                navigate={navigate}
                                 joinGame={joinGame}
                              />
                 }
