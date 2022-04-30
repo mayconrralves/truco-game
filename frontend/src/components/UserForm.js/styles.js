@@ -24,6 +24,7 @@ export const UserFormStyle = styled.main`
             border: none;
             border-radius: 5px;
             margin-top: 20px;
+            font-size: 1.2em;
         }
         
     }
