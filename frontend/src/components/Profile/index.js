@@ -1,5 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import { updateUser } from '../../services/api.js'
 import { AuthContext } from '../AuthContext';
 import UserForm from '../UserForm.js'
@@ -7,10 +8,10 @@ import UserForm from '../UserForm.js'
  
 export default function Profile() {
     const { setUser, user } = useContext(AuthContext);
-    const navigate = useNavigate();
+    const history = useHistory();
     
     const onCanceled = () => {
-        navigate(-1);
+      history.goBack();
     };
    
     return user ? (

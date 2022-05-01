@@ -4,6 +4,7 @@ import ConfigGame from "../components/ConfigGame";
 
 import Login from "../components/Login";
 import Signup from "../components/Signup";
+import Profile from '../components/Profile';
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function RoutesApp(){
@@ -20,20 +21,12 @@ export default function RoutesApp(){
                     <Route path='/signup' exact >
                         <Signup />
                     </Route>
+                    <ProtectedRoute path='/profile' exact>
+                        <Profile />
+                    </ProtectedRoute>
                     <ProtectedRoute path='/game' exact>
                         <ConfigGame />
                     </ProtectedRoute>
-                    {/* <Route path='/signup' element={<Signup/>}/>
-                    <Route path='/profile' element={
-                        <ProtectedRouter>
-                            <Profile />
-                        </ProtectedRouter>
-                    }/>
-                    <Route path='/game/*' element={
-                         <ProtectedRouter>
-                             <GameRouter />
-                         </ProtectedRouter>
-                    } />      */}
                
             </Switch>
     )

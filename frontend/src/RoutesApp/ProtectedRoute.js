@@ -4,7 +4,6 @@ import { AuthContext } from "../components/AuthContext";
 
 export default function ProtectedRoute({ children }){
 
-    console.log('Children')
     const { user } = useContext(AuthContext);
     return !user?.token ? (
         <Redirect to='/login' />
