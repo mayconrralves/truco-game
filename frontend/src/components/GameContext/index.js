@@ -11,6 +11,7 @@ export default function Game({children}){
    const [games, setGames ] = useState([]);
    const [playersJoin, setPlayersJoin ] = useState([]);
    const [ startGame, setStartGame ] = useState(false);
+   const [endGame, setEndGame ] = useState(false);
    
 
    const startSocket = useCallback(()=>{
@@ -42,6 +43,7 @@ export default function Game({children}){
          connected.on('start_game', (data )=>{
             setUuid(data.uuid);
             setStartGame(true);
+            setEndGame(false);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',({uuid})=>{
@@ -62,6 +64,8 @@ export default function Game({children}){
        playersJoin, 
        startGame, 
        setStartGame,
+       endGame,
+       setEndGame
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }

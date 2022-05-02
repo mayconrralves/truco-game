@@ -1,4 +1,5 @@
 import React, {useContext, useEffect, useState } from 'react';
+import { useHistory  } from 'react-router-dom';
 import { AuthContext } from '../AuthContext'; 
 import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
@@ -21,7 +22,7 @@ export default function ConfigGame(){
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
-   
+    const  history = useHistory();
 
     useEffect(()=>{
         if(connection && !loaded){ 
@@ -30,7 +31,11 @@ export default function ConfigGame(){
             emitEventListCreatedGames(socket);
         }
     }, [connection, loaded, socket]);
- 
+    useEffect(()=>{
+        if(startGame){
+            history.push('/game/start');
+        }
+    },[startGame, history]);
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,

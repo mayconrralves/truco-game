@@ -1,19 +1,40 @@
 import React, { useContext, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useHistory } from 'react-router-dom';
 import { GameContext } from '../GameContext';
+import ModalGame from "../ModalGame";
 export default function Game(){
-    const  {setStartGame} = useContext(GameContext);
-    const navigate = useNavigate();
-    const { room } = useParams();
-    
+    const  {setStartGame, setEndGame, endGame } = useContext(GameContext);
+    const history = useHistory();
     useEffect(()=>{
-        //capture an event when back button is clicked
-        window.onpopstate = function (event){
-            setStartGame(false);
-            //navigate(-1);
+        const listen = (location, action)=>{
+            if(action === 'POP'){
+                setEndGame(true);
+            }
+            
         }
-    },[navigate, setStartGame]);
+        
+        const clearListen = history.listen(listen);
+        return clearListen;
+    },[history, setEndGame]);
+   
+    const leaveGameButton = () => {
+        setStartGame(false);
+        history.goBack();
+    }
+    const cancelledButton = ()=> {
+        setEndGame(false);
+    }
     return (
-        <div>Game</div>
+        <div>
+            {endGame && <ModalGame
+                                confirm
+                                labelDescription='Você quer sair do jogo?'
+                                buttonDescription='Sair'
+                                onClickButton={leaveGameButton}
+                                onClickCancelled={cancelledButton}
+                          />
+            }
+            GameGame
+        </div>
     )
 }

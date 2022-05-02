@@ -6,6 +6,7 @@ import Login from "../components/Login";
 import Signup from "../components/Signup";
 import Profile from '../components/Profile';
 import ProtectedRoute from "./ProtectedRoute";
+import Game from "../components/Game";
 
 export default function RoutesApp(){
     return (
@@ -26,6 +27,9 @@ export default function RoutesApp(){
                     </ProtectedRoute>
                     <ProtectedRoute path='/game' exact>
                         <ConfigGame />
+                    </ProtectedRoute>
+                    <ProtectedRoute path='/game/start'>
+                        <Game />
                     </ProtectedRoute>
                
             </Switch>
