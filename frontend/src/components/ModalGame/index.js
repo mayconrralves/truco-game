@@ -1,29 +1,23 @@
 import React from 'react';
 import { ModalGameStyle } from './styles';
 
-export default function ModalGame({ 
-                                        confirm, 
+export default function ModalGame({  
                                         placeholder, 
-                                        setState,
+                                        onChangeInput,
                                         onClickCancelled,
                                         onClickButton, 
                                         buttonDescription, 
                                         labelDescription 
-                                                        }){
-   
-    const onChangeInput = (event)=>{
-        setState(event.target.value);
-    };
-    
+                                  }){ 
     
     return (
         <ModalGameStyle >
             <div>
-                { confirm && <label>{labelDescription}</label> }
-                { !confirm && <input onChange={ onChangeInput } placeholder={placeholder} /> }
+                { labelDescription && <label>{labelDescription}</label> }
+                { onChangeInput && <input onChange={ onChangeInput } placeholder={placeholder} /> }
                 <div>
                       <button onClick={ onClickButton }>{ buttonDescription }</button>
-                      { confirm && <button onClick={ onClickCancelled }>Cancelar</button>}
+                      { onClickCancelled && <button onClick={ onClickCancelled }>Cancelar</button>}
                 </div>
             </div>
         </ModalGameStyle>

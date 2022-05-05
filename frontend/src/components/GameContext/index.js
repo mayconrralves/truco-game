@@ -3,18 +3,21 @@ import { connect } from "../../services/socket";
 
 export const GameContext = React.createContext(null);
 
-
-export default function Game({children}){
+export default function Game({ children }){
    const [socket, setSocket ] = useState(null);
    const [uuid, setUuid] = useState(null);
    const [connection, setConnection ] = useState(false);
    const [games, setGames ] = useState([]);
    const [playersJoin, setPlayersJoin ] = useState([]);
-   const [ startGame, setStartGame ] = useState(false);
-   const [endGame, setEndGame ] = useState(false);
-   
+   const [startGame, setStartGame ] = useState(false);
+   const [goOutGame, setGoOutGame ] = useState(false);
+   const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);   
 
    const startSocket = useCallback(()=>{
+      const removeGame = (uuid)=>{
+         const draftGames = games.filter((game)=> game.uuid !== uuid);
+         setGames(draftGames);
+      }
       //events
       if(!socket){
          const connected = connect();
@@ -40,15 +43,24 @@ export default function Game({children}){
          connected.on('list_games', data=>{
             setGames(data.games);
          });
-         connected.on('start_game', (data )=>{
+         connected.on('start_game', data =>{
             setUuid(data.uuid);
             setStartGame(true);
-            setEndGame(false);
+            setGoOutGame(false);
+         });
+         connected.on('go_out_player', data=>{
+           setOtherGoOutPlayer(true);
+           setStartGame(false);
+           connected.emit('end_game', {uuid: data.uuid});
+           setPlayersJoin([]);
+         });
+         connected.on('end_game', data=>{
+           removeGame(data.uuid);
+           setPlayersJoin([]);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',({uuid})=>{
-            const draftGames = games.filter((game)=> game.uuid !== uuid);
-            setGames(draftGames);
+           removeGame(uuid);
          });
             setSocket(connected);
          }
@@ -64,8 +76,10 @@ export default function Game({children}){
        playersJoin, 
        startGame, 
        setStartGame,
-       endGame,
-       setEndGame
+       goOutGame,
+       setGoOutGame,
+       otherGoOutPlayer,
+       setOtherGoOutPlayer,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }

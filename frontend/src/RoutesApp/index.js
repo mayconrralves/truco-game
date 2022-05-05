@@ -10,9 +10,7 @@ import Game from "../components/Game";
 
 export default function RoutesApp(){
     return (
-  
             <Switch>
-               
                     <Route path='/' exact >
                         <Login />
                     </Route>

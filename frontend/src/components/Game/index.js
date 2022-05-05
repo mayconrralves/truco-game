@@ -3,34 +3,53 @@ import { useHistory } from 'react-router-dom';
 import { GameContext } from '../GameContext';
 import ModalGame from "../ModalGame";
 export default function Game(){
-    const  {setStartGame, setEndGame, endGame } = useContext(GameContext);
+    const  {
+        uuid,
+        setStartGame, 
+        setGoOutGame, 
+        goOutGame,
+        otherGoOutPlayer,
+        startGame, 
+        socket
+     } = useContext(GameContext);
     const history = useHistory();
     useEffect(()=>{
         const listen = (location, action)=>{
             if(action === 'POP'){
-                setEndGame(true);
+                setGoOutGame(true);
             }
-            
         }
         
         const clearListen = history.listen(listen);
         return clearListen;
-    },[history, setEndGame]);
-   
-    const leaveGameButton = () => {
+    },[history, setGoOutGame]);
+  
+    const goOutGameButton = () => {
         setStartGame(false);
+        socket.emit('go_out_player', {
+            uuid,
+        });
+        history.goBack();
+    }
+    //if a player leaves of game
+    const returnConfigGame=()=>{
         history.goBack();
     }
     const cancelledButton = ()=> {
-        setEndGame(false);
+        setGoOutGame(false);
     }
     return (
         <div>
-            {endGame && <ModalGame
-                                confirm
+            {otherGoOutPlayer && <ModalGame  
+                                labelDescription='Seu oponente saiu da sala.'
+                                buttonDescription='Sair'
+                                onClickButton={returnConfigGame}
+                          />
+            }
+            {(startGame && goOutGame) && <ModalGame
                                 labelDescription='Você quer sair do jogo?'
                                 buttonDescription='Sair'
-                                onClickButton={leaveGameButton}
+                                onClickButton={goOutGameButton}
                                 onClickCancelled={cancelledButton}
                           />
             }

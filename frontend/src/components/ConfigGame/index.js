@@ -58,6 +58,9 @@ export default function ConfigGame(){
         setOpenModal(false);
         initGame();
      }
+     const onChangeInput = (event)=>{
+        setNameRoom(event.target.value);
+    };
     return (
         <ConfigGameStyle >
             <h2>Salas</h2>
@@ -65,6 +68,7 @@ export default function ConfigGame(){
                                     placeholder='Nome da sala'
                                     setState={setNameRoom}
                                     onClickButton={onClickButton}
+                                    onChangeInput={onChangeInput}
                                     buttonDescription='Adiciona Nome'
                             /> 
             }

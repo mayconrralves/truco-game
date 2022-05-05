@@ -2,8 +2,7 @@ import React from "react";
 
 import { ListGamesStyle } from "./styles";
 
-export default function ListGames({ games, update, navigate, joinGame }){
-     
+export default function ListGames({ games, update, joinGame }){
     const printListGame = () => {
         return games.map((game,i)=>{
             return (
