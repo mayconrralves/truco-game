@@ -15,7 +15,6 @@ export default function ConfigGame(){
         uuid, 
         games, 
         connection, 
-        playersJoin, 
         startGame, 
     } = useContext(GameContext);
 
@@ -42,22 +41,22 @@ export default function ConfigGame(){
                 user: user.name,
                 userId: user.id,
             });
-        }
-    const joinGame = (room=>{
+    };
+    const joinGame = (room)=>{
         const data = {
             uuid: room,
             user: user.name,
             userId: user.id,
         }
         socket.emit('join_game', data);
-    });
+    };
     const initModal = () => {
         setOpenModal(true);
-    }
+    };
     const onClickButton = ()=> {
         setOpenModal(false);
         initGame();
-     }
+     };
      const onChangeInput = (event)=>{
         setNameRoom(event.target.value);
     };

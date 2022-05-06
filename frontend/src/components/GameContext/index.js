@@ -11,7 +11,8 @@ export default function Game({ children }){
    const [playersJoin, setPlayersJoin ] = useState([]);
    const [startGame, setStartGame ] = useState(false);
    const [goOutGame, setGoOutGame ] = useState(false);
-   const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);   
+   const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
+   const [userGoOut, setUserGoOut] = useState(null);   
 
    const startSocket = useCallback(()=>{
       const removeGame = (uuid)=>{
@@ -24,22 +25,22 @@ export default function Game({ children }){
          connected.on('connect',()=>{
             setConnection(true);
          });
-         //created game
+         //game created 
          connected.on('created_game', data=>{
             setUuid(data.room);
          });
-         // created game of other user
+         //game created by user another user
           connected.on('room_uuid', data=>{
             setGames(games=>[...games, data.game]);
          });
-         //added user on room
+         //the user added to the room
          connected.on('success_join', data=>{
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
          });
          connected.on('joined',data=>{
             setPlayersJoin(playersJoin=> [...playersJoin, data ]);
          });
-         //list of games created
+         //list of created games
          connected.on('list_games', data=>{
             setGames(data.games);
          });
@@ -47,22 +48,29 @@ export default function Game({ children }){
             setUuid(data.uuid);
             setStartGame(true);
             setGoOutGame(false);
+            setOtherGoOutPlayer(false);
+            setUserGoOut(null);
          });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
            setStartGame(false);
+           setUserGoOut(null);
            connected.emit('end_game', {uuid: data.uuid});
            setPlayersJoin([]);
+           setUuid(null);
+           removeGame(data.uuid);
          });
          connected.on('end_game', data=>{
-           removeGame(data.uuid);
-           setPlayersJoin([]);
+            setPlayersJoin([]);
+            setUuid(null);
          });
          //updated list of rooms when a user closed your session
-         connected.on('removed_uuid',({uuid})=>{
-           removeGame(uuid);
+         connected.on('removed_uuid',(data)=>{
+            removeGame(data.uuid);
+            setUuid(null);
          });
-            setSocket(connected);
+
+         setSocket(connected);
          }
    },[ socket, games ]);
    useEffect(()=>{
@@ -80,6 +88,7 @@ export default function Game({ children }){
        setGoOutGame,
        otherGoOutPlayer,
        setOtherGoOutPlayer,
+       userGoOut,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }
