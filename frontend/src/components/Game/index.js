@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { useHistory } from 'react-router-dom';
 import { GameContext } from '../GameContext';
+import { AuthContext } from '../AuthContext';
 import ModalGame from "../ModalGame";
 export default function Game(){
     const  {
@@ -9,9 +10,12 @@ export default function Game(){
         setGoOutGame, 
         goOutGame,
         otherGoOutPlayer,
+        userGoOut,
         startGame, 
         socket
      } = useContext(GameContext);
+
+     const { user } = useContext(AuthContext);
     const history = useHistory();
     useEffect(()=>{
         const listen = (location, action)=>{
@@ -28,6 +32,8 @@ export default function Game(){
         setStartGame(false);
         socket.emit('go_out_player', {
             uuid,
+            user: user.name,
+
         });
         history.goBack();
     }
@@ -41,7 +47,7 @@ export default function Game(){
     return (
         <div>
             {otherGoOutPlayer && <ModalGame  
-                                labelDescription='Seu oponente saiu da sala.'
+                                labelDescription={`${userGoOut} saiu da sala.`}
                                 buttonDescription='Sair'
                                 onClickButton={returnConfigGame}
                           />

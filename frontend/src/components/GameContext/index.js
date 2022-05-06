@@ -30,8 +30,9 @@ export default function Game({ children }){
             setUuid(data.room);
          });
          //game created by user another user
-          connected.on('room_uuid', data=>{
-            setGames(games=>[...games, data.game]);
+         connected.on('room_uuid', game=>{
+            
+            setGames(games=>[...games, game]);
          });
          //the user added to the room
          connected.on('success_join', data=>{
@@ -54,19 +55,19 @@ export default function Game({ children }){
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
            setStartGame(false);
-           setUserGoOut(null);
+           setUserGoOut(data.user);
            connected.emit('end_game', {uuid: data.uuid});
            setPlayersJoin([]);
            setUuid(null);
            removeGame(data.uuid);
          });
-         connected.on('end_game', data=>{
+         connected.on('end_game', ()=>{
             setPlayersJoin([]);
             setUuid(null);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',(data)=>{
-            removeGame(data.uuid);
+            removeGame('removed_uuid',data.uuid);
             setUuid(null);
          });
 
