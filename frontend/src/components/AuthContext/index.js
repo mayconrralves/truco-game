@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { signin as signinApi } from '../../services/api';
 
 const NAME_STORAGE_DATA = 'data';
@@ -8,7 +8,13 @@ export const AuthContext = React.createContext(null);
 export default function Auth({ children }) {
 
     const [user, setUser] = useState(null);
-
+    const [isAuth, setIsAuth ] = useState(false);
+    useEffect(()=>{
+        if(!user){
+            getUser();
+        }
+        setIsAuth(true);
+    },[user]);
     const signin = async ({ email, password } )=>{
         const data = await signinApi({ email, password});
         if(data.error){
@@ -27,7 +33,7 @@ export default function Auth({ children }) {
         const data =  JSON.parse(localStorage.getItem(NAME_STORAGE_DATA));
         setUser(data);
     }
-    const values={ user, signin, signout, getUser, setUser };
+    const values={ user, signin, signout, getUser, setUser, isAuth };
 
     return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>
 }

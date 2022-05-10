@@ -5,30 +5,30 @@ import ConfigGame from "../components/ConfigGame";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import Profile from '../components/Profile';
-import ProtectedRoute from "./ProtectedRoute";
+import CustomRouter from "./CustomRoute";
 import Game from "../components/Game";
 
 export default function RoutesApp(){
     return (
             <Switch>
-                    <Route path='/' exact >
+                    <CustomRouter path='/' auth exact >
                         <Login />
-                    </Route>
-                    <Route path='/login' exact >
+                    </CustomRouter>
+                    <CustomRouter path='/login' auth exact >
                         <Login />
-                    </Route>   
-                    <Route path='/signup' exact >
+                    </CustomRouter>   
+                    <CustomRouter path='/signup' auth exact >
                         <Signup />
-                    </Route>
-                    <ProtectedRoute path='/profile' exact>
+                    </CustomRouter>
+                    <CustomRouter path='/profile' exact protect>
                         <Profile />
-                    </ProtectedRoute>
-                    <ProtectedRoute path='/game' exact>
+                    </CustomRouter>
+                    <CustomRouter path='/game' exact protect>
                         <ConfigGame />
-                    </ProtectedRoute>
-                    <ProtectedRoute path='/game/start'>
+                    </CustomRouter>
+                    <CustomRouter path='/game/start'>
                         <Game />
-                    </ProtectedRoute>
+                    </CustomRouter>
                
             </Switch>
     )
