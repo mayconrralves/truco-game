@@ -9,7 +9,6 @@ export default function CustomRoute({ comp: Component, protect, auth, path, ...r
         return isAuth && <Redirect to='/login'/>
     }
     if(!protect && user?.token){
-        console.log(2)
         if(auth){
             return  <Redirect to='/game' />
         }
@@ -17,10 +16,7 @@ export default function CustomRoute({ comp: Component, protect, auth, path, ...r
     }
     return <Route 
         {...rest}
-        render={props=>(
-           ()=> <Component 
-                {...props}
-            />
-        )}
+            render={props=>  <Component {...props}/>
+        }
     />
 }
