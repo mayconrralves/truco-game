@@ -21,6 +21,7 @@ export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
     socket.on('create_game',async ({ name, user, userId })=>{
         const uuidExists = await clientRedis.get(socket.id);
+        
         //if the user has already created a room
         if(uuidExists){
             io.to(socket.id).emit('exists_uuid',{
@@ -46,6 +47,7 @@ export const initGame=async (socket, io)=>{
 
     socket.on('join_game', async ({ uuid, user, userId })=>{
         const numbersUsers = socket.adapter.rooms.get(uuid)?.size ?? 0;
+        
         if(numbersUsers === 0){
             socket.emit('room_no_created');
         }
@@ -79,15 +81,9 @@ export const initGame=async (socket, io)=>{
     });
 
     socket.on('list_created_games',async ()=>{
-       const rooms = listRooms(socket);
+        const rooms = listRooms(socket);
        const games = [];
             const uuid = await clientRedis.get(socket.id);
-            if(!uuid) {
-                io.to(socket.id).emit('error', {
-                    msg: 'There are not games',
-                });
-                return;
-            }
             for(let room of rooms){
                 if(uuid === room){
                     continue;
@@ -109,7 +105,6 @@ export const initGame=async (socket, io)=>{
             return;
         }
         socket.leave(uuid);
-        
         socket.to(uuid).emit('go_out_player', {
            uuid,
            user,
