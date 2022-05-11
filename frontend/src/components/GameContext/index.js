@@ -31,7 +31,6 @@ export default function Game({ children }){
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
-            
             setGames(games=>[...games, game]);
          });
          //the user added to the room

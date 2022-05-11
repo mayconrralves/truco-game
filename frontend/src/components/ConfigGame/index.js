@@ -5,10 +5,6 @@ import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
 import ModalGame from '../ModalGame';
 import { ConfigGameStyle } from './styles';
-
-const emitEventListCreatedGames = (socket)=>{
-    socket.emit('list_created_games');
-}
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
     const { socket, 
@@ -17,12 +13,12 @@ export default function ConfigGame(){
         connection, 
         startGame, 
     } = useContext(GameContext);
-
+    
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
     const  history = useHistory();
-
+    
     useEffect(()=>{
         if(connection && !loaded){ 
             setLoaded(true);
@@ -35,6 +31,10 @@ export default function ConfigGame(){
             history.push('/game/start');
         }
     },[startGame, history]);
+    
+    const emitEventListCreatedGames = (socket)=>{
+        socket.emit('list_created_games');
+    }
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
