@@ -17,6 +17,11 @@ const emitRemovedUuid = (socket, uuid) =>{
         uuid,
     });
 }
+const removeUuid = async (clientRedis, socket, uuid) =>{
+    await clientRedis.del(uuid);
+    await clientRedis.del(socket.id);
+    socket.leave(uuid);
+}
 export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
     socket.on('create_game',async ({ name, user, userId })=>{
@@ -41,7 +46,6 @@ export const initGame=async (socket, io)=>{
                 name,
                 user,
                 userId,
-                created: true,
         });
     });
 
@@ -67,16 +71,20 @@ export const initGame=async (socket, io)=>{
                 room: uuid, 
                 userId, 
                 name: room.name, 
-                created: false 
             });
             //Return to the joined user
-            io.to(socket.id).emit('joined', { ...room, room: uuid, created: false });
+            io.to(socket.id).emit('joined', { ...room, room: uuid });
+            const myUuid = await clientRedis.get(socket.id);
             if(socket.adapter.rooms.get(uuid).size === NUM_PLAYERS){
-                io.in(uuid).emit('start_game', { uuid });
+                io.in(uuid).emit('start_game', {room: uuid });
+                if(myUuid){
+                    await removeUuid(clientRedis, socket, myUuid);
+                }
+                socket.broadcast.emit('full_game', { room: uuid });
             }
         } 
         else {
-            socket.emit('full_game');
+            socket.emit('full_game', { room: uuid });
         }
     });
 
@@ -104,13 +112,18 @@ export const initGame=async (socket, io)=>{
             });
             return;
         }
-        socket.leave(uuid);
         socket.to(uuid).emit('go_out_player', {
-           uuid,
-           user,
+            uuid,
+            user,
         });
-        emitRemovedUuid(socket, uuid);
         await clientRedis.del(socket.id);
+        emitRemovedUuid(socket, uuid);
+        socket.leave(uuid);
+    });
+    socket.on('remove_room',async ({room})=>{
+      
+        await removeUuid(clientRedis, socket, room);
+        emitRemovedUuid(socket, uuid);
     });
     socket.on('end_game', async ({ uuid })=> {
         const data = await clientRedis.get(uuid);
@@ -120,10 +133,8 @@ export const initGame=async (socket, io)=>{
             });
             return;
         }
-        await clientRedis.del(uuid);
-        await clientRedis.del(socket.id);
-        socket.leave(uuid);
         io.to(socket.id).emit('end_game');
+        await removeUuid(clientRedis, socket, uuid);
         emitRemovedUuid(socket, uuid, data);
     });
 

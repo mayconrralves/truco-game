@@ -15,7 +15,8 @@ export default function Game(){
         socket
      } = useContext(GameContext);
 
-     const { user } = useContext(AuthContext);
+     
+    const { user } = useContext(AuthContext);
     const history = useHistory();
     useEffect(()=>{
         const listen = (location, action)=>{

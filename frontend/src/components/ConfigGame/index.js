@@ -11,9 +11,11 @@ export default function ConfigGame(){
         uuid, 
         games, 
         connection, 
-        startGame, 
+        startGame,
+        updateList,
     } = useContext(GameContext);
     
+  
     const [loaded, setLoaded] = useState(false);
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
@@ -31,7 +33,11 @@ export default function ConfigGame(){
             history.push('/game/start');
         }
     },[startGame, history]);
-    
+    useEffect(()=>{
+       if(updateList){
+           emitEventListCreatedGames(socket);
+       }
+    },[ socket, updateList] );
     const emitEventListCreatedGames = (socket)=>{
         socket.emit('list_created_games');
     }
