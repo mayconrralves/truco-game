@@ -38,7 +38,6 @@ export default function Game({ children }){
          });
          //the user added to the room
          connected.on('success_join', data=>{
-            console.log('success')
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
          });
          connected.on('joined',data=>{

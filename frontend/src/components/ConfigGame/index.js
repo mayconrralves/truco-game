@@ -20,7 +20,6 @@ export default function ConfigGame(){
     const [ openModal, setOpenModal ] = useState(false);
     const [nameRoom, setNameRoom ] = useState(null);
     const  history = useHistory();
-    
     useEffect(()=>{
         if(connection && !loaded){ 
             setLoaded(true);
@@ -62,10 +61,13 @@ export default function ConfigGame(){
     const onClickButton = ()=> {
         setOpenModal(false);
         initGame();
-     };
-     const onChangeInput = (event)=>{
+    };
+    const onChangeInput = (event)=>{
         setNameRoom(event.target.value);
     };
+
+    console.log('games', games);
+    
     return (
         <ConfigGameStyle >
             <h2>Salas</h2>

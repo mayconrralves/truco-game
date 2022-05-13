@@ -40,7 +40,12 @@ export const initGame=async (socket, io)=>{
             room: uuid,
         });
         await clientRedis.set(socket.id, uuid);
-        await clientRedis.set(uuid, JSON.stringify({name, user, userId}));
+        await clientRedis.set(uuid, JSON.stringify({
+                                                        name, 
+                                                        user, 
+                                                        userId,
+                                                        start: false,
+                                                    }));
         socket.broadcast.emit('room_uuid',{
                 room: uuid,
                 name,
@@ -50,93 +55,14 @@ export const initGame=async (socket, io)=>{
     });
 
     socket.on('join_game', async ({ uuid, user, userId })=>{
-        const numbersUsers = socket.adapter.rooms.get(uuid)?.size ?? 0;
         
-        if(numbersUsers === 0){
-            socket.emit('room_no_created');
-        }
-        else if(numbersUsers < NUM_PLAYERS){
-            socket.join(uuid);
-            const data = await clientRedis.get(uuid);
-            if(!data){
-                io.to(socket.id).emit('error', {
-                    msg: 'Uuid not found',
-                });
-                return;
-            }
-            const room = JSON.parse(data);
-            //send to others clients that a new player has joined
-            socket.to(uuid).emit('success_join', { 
-                user, 
-                room: uuid, 
-                userId, 
-                name: room.name, 
-            });
-            //Return to the joined user
-            io.to(socket.id).emit('joined', { ...room, room: uuid });
-            const myUuid = await clientRedis.get(socket.id);
-            if(socket.adapter.rooms.get(uuid).size === NUM_PLAYERS){
-                io.in(uuid).emit('start_game', {room: uuid });
-                if(myUuid){
-                    await removeUuid(clientRedis, socket, myUuid);
-                }
-                socket.broadcast.emit('full_game', { room: uuid });
-            }
-        } 
-        else {
-            socket.emit('full_game', { room: uuid });
-        }
     });
 
     socket.on('list_created_games',async ()=>{
-        const rooms = listRooms(socket);
-       const games = [];
-            const uuid = await clientRedis.get(socket.id);
-            for(let room of rooms){
-                if(uuid === room){
-                    continue;
-                }else {
-                    const data = await clientRedis.get(room);
-                    games.push({room, ...JSON.parse(data)});
-                }
-            }
-            io.to(socket.id).emit('list_games',{  
-                games,
-            });
-    });
-    socket.on('go_out_player', async ({uuid, user})=>{
-        const data = await clientRedis.get(uuid);
-        if(!data){
-            io.to(socket.id).emit('error',{
-                msg: 'Uuid not found'
-            });
-            return;
-        }
-        socket.to(uuid).emit('go_out_player', {
-            uuid,
-            user,
-        });
-        await clientRedis.del(socket.id);
-        emitRemovedUuid(socket, uuid);
-        socket.leave(uuid);
-    });
-    socket.on('remove_room',async ({room})=>{
       
-        await removeUuid(clientRedis, socket, room);
-        emitRemovedUuid(socket, uuid);
     });
-    socket.on('end_game', async ({ uuid })=> {
-        const data = await clientRedis.get(uuid);
-        if(!data){
-            io.to(socket.id).emit('error', {
-                msg: 'uuid not found',
-            });
-            return;
-        }
-        io.to(socket.id).emit('end_game');
-        await removeUuid(clientRedis, socket, uuid);
-        emitRemovedUuid(socket, uuid, data);
-    });
+    
+   
 
     socket.on('disconnect', async()=>{
         const uuid = await clientRedis.get(socket.id);
