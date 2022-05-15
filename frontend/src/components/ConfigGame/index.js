@@ -15,7 +15,8 @@ export default function ConfigGame(){
         uuid, 
         games, 
         connection, 
-        startGame, 
+        startGame,
+        updateList,
     } = useContext(GameContext);
 
     const [loaded, setLoaded] = useState(false);
@@ -35,6 +36,12 @@ export default function ConfigGame(){
             history.push('/game/start');
         }
     },[startGame, history]);
+
+    useEffect(()=>{
+        if(updateList){
+            emitEventListCreatedGames(socket);
+        }
+    },[socket, updateList]);
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,

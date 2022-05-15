@@ -35,13 +35,12 @@ export const initGame=async (socket, io)=>{
             room: uuid,
         });
         await clientRedis.set(socket.id, uuid);
-        await clientRedis.set(uuid, JSON.stringify({name, user, userId}));
+        await clientRedis.set(uuid, JSON.stringify({name, user, userId, start: false}));
         socket.broadcast.emit('room_uuid',{
                 room: uuid,
                 name,
                 user,
                 userId,
-                created: true,
         });
     });
 
@@ -67,12 +66,16 @@ export const initGame=async (socket, io)=>{
                 room: uuid, 
                 userId, 
                 name: room.name, 
-                created: false 
             });
             //Return to the joined user
-            io.to(socket.id).emit('joined', { ...room, room: uuid, created: false });
+            io.to(socket.id).emit('joined', { ...room, room: uuid });
             if(socket.adapter.rooms.get(uuid).size === NUM_PLAYERS){
                 io.in(uuid).emit('start_game', { uuid });
+                console.log(room)
+                clientRedis.set(uuid,JSON.stringify({...room, start: true}));
+                const myUuid = await clientRedis.get(socket.id);
+                socket.leave(myUuid);
+                socket.broadcast.emit('full_game', {room: uuid});
             }
         } 
         else {
@@ -85,13 +88,15 @@ export const initGame=async (socket, io)=>{
        const games = [];
             const uuid = await clientRedis.get(socket.id);
             for(let room of rooms){
-                if(uuid === room){
-                    continue;
-                }else {
+                if(!(uuid === room)){
                     const data = await clientRedis.get(room);
-                    games.push({room, ...JSON.parse(data)});
+                    const dataRoom = JSON.parse(data);
+                    if(!dataRoom.start){
+                        games.push({room, ...dataRoom});
+                    }
                 }
             }
+            console.log('games',games)
             io.to(socket.id).emit('list_games',{  
                 games,
             });
