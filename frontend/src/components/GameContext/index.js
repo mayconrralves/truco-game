@@ -13,7 +13,11 @@ export default function Game({ children }){
    const [goOutGame, setGoOutGame ] = useState(false);
    const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
    const [userGoOut, setUserGoOut] = useState(null);
+<<<<<<< HEAD
    const [updateList, setUpdateList] = useState(false);   
+=======
+   const [updateList, setUpdateList] = useState(false);
+>>>>>>> acerto
 
    const startSocket = useCallback(()=>{
       const removeGame = (uuid)=>{
@@ -41,6 +45,7 @@ export default function Game({ children }){
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
          });
          connected.on('joined',data=>{
+            setUpdateList(false);
             setPlayersJoin(playersJoin=> [...playersJoin, data ]);
             setUpdateList(false);
             if(uuid){
@@ -56,7 +61,9 @@ export default function Game({ children }){
          });
          //list of created games
          connected.on('list_games', data=>{
+            console.log('list')
             setGames(data.games);
+            setUpdateList(false);
          });
          connected.on('start_game', data =>{
             setUuid(data.room);
@@ -64,16 +71,24 @@ export default function Game({ children }){
             setGoOutGame(false);
             setOtherGoOutPlayer(false);
             setUserGoOut(null);
+<<<<<<< HEAD
             removeGame(data.room);
+=======
+            setUpdateList(false);
+>>>>>>> acerto
          });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
            setStartGame(false);
            setUserGoOut(data.user);
+           setUpdateList(true);
            connected.emit('end_game', {uuid: data.uuid});
            setPlayersJoin([]);
            setUuid(null);
            removeGame(data.uuid);
+         });
+         connected.on('full_game', data=>{
+            setUpdateList(true);
          });
          connected.on('end_game', ()=>{
             setPlayersJoin([]);
