@@ -31,6 +31,7 @@ export default function Game(){
   
     const goOutGameButton = () => {
         setStartGame(false);
+        console.log('go',uuid)
         socket.emit('go_out_player', {
             uuid,
             user: user.name,

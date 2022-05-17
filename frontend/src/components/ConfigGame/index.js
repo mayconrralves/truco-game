@@ -32,7 +32,6 @@ export default function ConfigGame(){
             history.push('/game/start');
         }
     },[startGame, history]);
-<<<<<<< HEAD
     useEffect(()=>{
        if(updateList){
            emitEventListCreatedGames(socket);
@@ -41,14 +40,12 @@ export default function ConfigGame(){
     const emitEventListCreatedGames = (socket)=>{
         socket.emit('list_created_games');
     }
-=======
 
     useEffect(()=>{
         if(updateList){
             emitEventListCreatedGames(socket);
         }
     },[socket, updateList]);
->>>>>>> acerto
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
@@ -74,9 +71,7 @@ export default function ConfigGame(){
     const onChangeInput = (event)=>{
         setNameRoom(event.target.value);
     };
-
-    console.log('games', games);
-    
+    console.log('uuid',uuid);
     return (
         <ConfigGameStyle >
             <h2>Salas</h2>

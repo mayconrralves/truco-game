@@ -13,97 +13,92 @@ export default function Game({ children }){
    const [goOutGame, setGoOutGame ] = useState(false);
    const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
    const [userGoOut, setUserGoOut] = useState(null);
-<<<<<<< HEAD
    const [updateList, setUpdateList] = useState(false);   
-=======
-   const [updateList, setUpdateList] = useState(false);
->>>>>>> acerto
+
 
    const startSocket = useCallback(()=>{
-      const removeGame = (uuid)=>{
-         if(games.length === 0) return;
-         const draftGames = games.filter((game)=> game.uuid !== uuid);
-         setGames(draftGames);
-      }
       //events
       if(!socket){
          const connected = connect();
          connected.on('connect',()=>{
+            console.log('connect')
             setConnection(true);
          });
          //game created 
          connected.on('created_game', data=>{
             setUuid(data.room);
             setUpdateList(false);
+            console.log('created_game', data)
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
+            console.log('room_uuid', game);
             setGames(games=>[...games, game]);
          });
          //the user added to the room
          connected.on('success_join', data=>{
+            console.log('success_join',data)
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
          });
          connected.on('joined',data=>{
-            setUpdateList(false);
+            console.log('joined')
             setPlayersJoin(playersJoin=> [...playersJoin, data ]);
-            setUpdateList(false);
-            if(uuid){
-               connected.emit('remove_room', { room: uuid });
-               setUuid([]);
-            }
-            setGames([]);
+            setUuid(data.room);
+           
          });
          connected.on('full_game', data=>{
-           removeGame(data.room);
-           console.log('full_game');
+            console.log('full_game')
            setUpdateList(true);
          });
          //list of created games
          connected.on('list_games', data=>{
-            console.log('list')
+            console.log('list_game');
             setGames(data.games);
             setUpdateList(false);
          });
          connected.on('start_game', data =>{
-            setUuid(data.room);
+            console.log('start_game', data)
+            setUuid(data.uuid);
             setStartGame(true);
             setGoOutGame(false);
             setOtherGoOutPlayer(false);
             setUserGoOut(null);
-<<<<<<< HEAD
-            removeGame(data.room);
-=======
             setUpdateList(false);
->>>>>>> acerto
+
          });
          connected.on('go_out_player', data=>{
+            console.log('go_out_player')
            setOtherGoOutPlayer(true);
            setStartGame(false);
            setUserGoOut(data.user);
-           setUpdateList(true);
            connected.emit('end_game', {uuid: data.uuid});
+           console.log('end_game', data.uuid)
            setPlayersJoin([]);
-           setUuid(null);
-           removeGame(data.uuid);
+           setUpdateList(true);
+          // setUuid(null);
          });
          connected.on('full_game', data=>{
+            console.log('full_game');
             setUpdateList(true);
          });
          connected.on('end_game', ()=>{
+            console.log('end_game');
             setPlayersJoin([]);
             setUuid(null);
             setUpdateList(true);
          });
          //updated list of rooms when a user closed your session
-         connected.on('removed_uuid',(data)=>{
-            removeGame(data.uuid);
-            setUuid(null);
+         connected.on('removed_uuid',()=>{
+            console.log('removed_uuid');
             setUpdateList(true);
+            setUuid(null);
          });
+         connected.on('error', (data)=>{
+            console.log('error', data.msg, data.event);
+         })
          setSocket(connected);
          }
-   },[ socket, games, uuid ]);
+   },[ socket ]);
    useEffect(()=>{
       startSocket();   
    },[startSocket]);
