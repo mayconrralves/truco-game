@@ -15,15 +15,6 @@ const listRooms = (socket) =>{
 export const initGame=async (socket, io)=>{
    const clientRedis = await connectRedis();
     socket.on('create_game',async ({ name, user, userId })=>{
-        const uuidExists = await clientRedis.get(socket.id);
-        
-        //if the user has already created a room
-        if(uuidExists){
-            io.to(socket.id).emit('exists_uuid',{
-                uuid: uuidExists
-            });
-            return;
-        }
         const uuid = uuid4();
         socket.join(uuid);
         io.to(socket.id).emit('created_game', {
@@ -70,9 +61,10 @@ export const initGame=async (socket, io)=>{
                 await clientRedis.set(uuid,JSON.stringify({...room, start: true}));
                 const myUuid = await clientRedis.get(socket.id);
                 if(myUuid){
+                    await clientRedis.del(myUuid);
+                    await clientRedis.del(socket.id);
                     socket.leave(myUuid);
                 }
-                console.log('full_game')
                 socket.broadcast.emit('full_game', {room: uuid});
             }
         } 
@@ -89,55 +81,37 @@ export const initGame=async (socket, io)=>{
                 if(!(uuid === room)){
                     const data = await clientRedis.get(room);
                     const dataRoom = JSON.parse(data);
-                    if(!dataRoom.start){
+                    if(data && !dataRoom.start){
                         games.push({room, ...dataRoom});
                     }
                 }
             }
-            console.log(games)
             io.to(socket.id).emit('list_games',{  
                 games,
             });
     });
     socket.on('go_out_player', async ({uuid, user})=>{
         const data = await clientRedis.get(uuid);
-        if(!data){
-            io.to(socket.id).emit('error',{
-                msg: 'Uuid not found',
-                event: 'go_out_player'
-            });
-            return;
-        }
         socket.to(uuid).emit('go_out_player', {
             uuid,
             user,
         });
-        console.log('goggo',uuid);
-        socket.to(uuid).emit('removed_uuid');
+        io.to(uuid).emit('removed_uuid');
+        await clientRedis.del(socket.id);
+        await clientRedis.del(uuid);
         socket.leave(uuid);
     });
     socket.on('end_game', async ({ uuid })=> {
-        const data = await clientRedis.get(uuid);
-        console.log('end', uuid, data)
-        if(!data){
-            io.to(socket.id).emit('error', {
-                msg: 'uuid not found',
-                event: 'end_game',
-            });
-            return;
-        }
-        io.in(uuid).emit('removed_uuid');
-        io.to(socket.id).emit('end_game');
-        socket.leave(uuid);
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
+        socket.to(uuid).emit('end_game');
+        socket.to(uuid).emit('removed_uuid');
+        socket.leave(uuid);
     });
 
     socket.on('disconnect', async()=>{
         const uuid = await clientRedis.get(socket.id);
         if(!uuid) return;
-        const data = await clientRedis.get(uuid);
-        if(!data) return;
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
     });

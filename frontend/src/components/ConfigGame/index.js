@@ -71,7 +71,7 @@ export default function ConfigGame(){
     const onChangeInput = (event)=>{
         setNameRoom(event.target.value);
     };
-    console.log('uuid',uuid);
+
     return (
         <ConfigGameStyle >
             <h2>Salas</h2>
