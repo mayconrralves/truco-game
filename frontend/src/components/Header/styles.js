@@ -12,7 +12,7 @@ export const StyledHeader= styled.header`
         align-items: baseline;
         h1 {
             
-            width: 300px;
+            width: 500px;
             font-size: 3em;
             text-align: center;
         }
