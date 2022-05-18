@@ -5,13 +5,15 @@ export const ModalGameStyle = styled.div`
     height: 100vh;
     z-index: 1;
     position: absolute;
+    top:0;
+    right: 0;
     display: flex;
     justify-content: center;
+    align-items: center;
     background-color: rgba(0,0,0,0.2);
     div {
         width: 60%;
-        height: 35vh;
-        margin-top: 20px;
+        height: 55vh;
         display: flex;
         flex-direction: column;
         justify-content: center;

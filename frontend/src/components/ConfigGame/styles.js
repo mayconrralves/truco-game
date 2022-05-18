@@ -2,13 +2,14 @@ import styled from 'styled-components';
 
 export const ConfigGameStyle = styled.main`
     display: flex;
-    width: 80%;
+    width: 100%;
     min-height: 50vh;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     margin-top: 20px;
     h2 {
-        width: 100%;
+        width: 90%;
         height: 40px;
         display: flex;
         font-size: 1.6em;
