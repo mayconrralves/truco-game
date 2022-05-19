@@ -5,7 +5,8 @@ import * as Yup from 'yup';
 import { UserFormStyle } from './styles';
 
 
-function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
+function UserForm({ setUser, isUpdate, sendData, user, onCanceled, success, error }) {
+    console.log(user)
     return (
         <UserFormStyle>
             <Formik
@@ -41,15 +42,16 @@ function UserForm({ setUser, isUpdate, sendData, user, onCanceled }) {
                     async (values)=>{
                         let data;
                         if(isUpdate){
-                            data = await sendData({...values, bearerToken: user.token})
+                            data = await sendData({...values, bearerToken: user.token});
                         }else {
                             data = await sendData ({...values});
                         }
                         if(data.error){
-                            alert('error');
+                            error();
                         } 
                         else  {
-                            setUser({...data, token:user.token});
+                            isUpdate && setUser({...data, token: user.token});
+                            success();
                         }
                     }
                 }
@@ -109,7 +111,9 @@ UserForm.propTypes = {
         if(props['isUpdate'] === true && typeof props[propName] !== 'object'){
             return new Error ("Error, when isUpdate is passed to props, user must be declared.")
         }
-    }
+    },
+    success: PropTypes.func,
+    error: PropTypes.func,
 };
 
 export default UserForm;

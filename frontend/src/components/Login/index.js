@@ -1,4 +1,5 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
+import { toast } from 'react-toastify';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
@@ -10,6 +11,15 @@ export default function Login() {
     
     const {user, signin } = useContext(AuthContext);
     const history = useHistory();
+    const options = {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        };
     return (
         <LoginStyle>
             <Formik
@@ -32,6 +42,9 @@ export default function Login() {
                 onSubmit={
                     async (values)=>{
                         const error = await signin({...values});
+                        if(error){
+                           toast.error('Erro! Verifique o email ou/e a senha.', options);
+                        }
                         history.push('/game');
                     }
                 }
