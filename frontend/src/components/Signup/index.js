@@ -9,14 +9,12 @@ import { signup } from '../../services/api';
 export default function Signup() {
     
     const history = useHistory();
-    const navigate= () => {
-        history.replace('/');
-    }
     const success = ()=> {
-        toast.success(' Cadastrado com sucesso.');
+        toast.success('Cadastrado com sucesso.');
+        history.replace('/');
     }
     const error = () => {
         toast.error('Erro no cadastro!');
     }
-    return   <UserForm sendData={signup} success={success} error={error} navigate={navigate}/>
+    return   <UserForm sendData={signup} success={success} error={error} />
 }
