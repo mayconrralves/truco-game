@@ -29,12 +29,13 @@ export const signup = async ({username, email, password})=>{
     }
 } 
 
-export const updateUser = async ({name, email, password, bearerToken})=>{
+export const updateUser = async ({name, email, password, oldPassword, bearerToken})=>{
     try{
         const data = await api.patch('/user/update', {
             name,
             email,
             password,
+            oldPassword,
         }, {
             headers: {
                 Authorization: `bearer ${bearerToken}`,

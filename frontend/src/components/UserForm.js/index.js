@@ -6,7 +6,6 @@ import { UserFormStyle } from './styles';
 
 
 function UserForm({ setUser, isUpdate, sendData, user, onCanceled, success, error }) {
-    console.log(user)
     return (
         <UserFormStyle>
             <Formik

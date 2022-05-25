@@ -1,5 +1,6 @@
 import  {Users} from '../models';
 import { Op } from 'sequelize';
+import { use } from 'passport';
 
 class UsersController {
     async store(req, res){
@@ -20,7 +21,14 @@ class UsersController {
     }
     async update (req, res){
         const { userId } = req;
+        const { oldPassword } = req.body;
         const user = await Users.findByPk(userId);
+        if(oldPassword){
+            const validate = await user.checkPassword(oldPassword);
+            if(!validate){
+                return res.status(401).json({error: 'wrong password'}); 
+            }
+        }
         if(req.body.email){
             const otherUser = await Users.findAll({
                where: {
