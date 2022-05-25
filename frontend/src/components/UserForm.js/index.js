@@ -111,8 +111,8 @@ UserForm.propTypes = {
             return new Error ("Error, when isUpdate is passed to props, user must be declared.")
         }
     },
-    success: PropTypes.func,
-    error: PropTypes.func,
+    success: PropTypes.func.isRequired,
+    error: PropTypes.func.isRequired,
 };
 
 export default UserForm;
