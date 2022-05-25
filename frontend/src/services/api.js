@@ -16,10 +16,10 @@ export const signin = async ({ email, password})=>{
         return error.response.data;
     }
 }
-export const signup = async ({username, email, password})=>{
+export const signup = async ({name, email, password})=>{
     try{
         const data = await api.post('/user/create',{
-            name: username,
+            name,
             email,
             password,
         });

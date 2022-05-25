@@ -4,6 +4,7 @@ import { use } from 'passport';
 
 class UsersController {
     async store(req, res){
+        console.log(req.body)
         const user = await Users.findOne({where: {email: req.body.email}});
         if(user){
             return res.status(400).json({
