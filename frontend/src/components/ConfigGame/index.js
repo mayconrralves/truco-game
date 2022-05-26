@@ -33,19 +33,20 @@ export default function ConfigGame(){
         }
     },[startGame, history]);
     useEffect(()=>{
-       if(updateList){
-           emitEventListCreatedGames(socket);
-       }
+        if(updateList){
+            emitEventListCreatedGames(socket);
+        }
     },[ socket, updateList] );
-    const emitEventListCreatedGames = (socket)=>{
-        socket.emit('list_created_games');
-    }
-
+    
     useEffect(()=>{
         if(updateList){
             emitEventListCreatedGames(socket);
         }
     },[socket, updateList]);
+    
+    const emitEventListCreatedGames = (socket)=>{
+        socket.emit('list_created_games');
+    }
     const initGame = () =>{
         socket.emit('create_game', {
                 name: nameRoom,
