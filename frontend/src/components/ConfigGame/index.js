@@ -76,6 +76,7 @@ export default function ConfigGame(){
         <ConfigGameStyle >
             <h2>Salas</h2>
             { openModal && <ModalGame  
+                                    labelDescription='Insira um nome para sala'
                                     placeholder='Nome da sala'
                                     setState={setNameRoom}
                                     onClickButton={onClickButton}

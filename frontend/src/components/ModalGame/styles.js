@@ -54,6 +54,7 @@ export const ModalGameStyle = styled.div`
                 height: 47px;
                 width: 32%;
                 margin: 0 6px;
+                font-size: 1.2em;
                 &:focus {
                     outline-color: white;
                     width: 31%;
