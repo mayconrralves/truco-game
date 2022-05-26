@@ -33,7 +33,6 @@ export default function Game(){
         socket.emit('go_out_player', {
             uuid,
             user: user.name,
-
         });
         history.goBack();
     }

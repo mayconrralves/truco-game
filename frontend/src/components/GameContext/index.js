@@ -71,11 +71,13 @@ export default function Game({ children }){
             setPlayersJoin([]);
             setUuid(null);
             setUpdateList(true);
+            setStartGame(false);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
             setUpdateList(true);
             setUuid(null);
+            setStartGame(false);
          });
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);

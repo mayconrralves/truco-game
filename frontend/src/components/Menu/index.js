@@ -1,23 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
+import { GameContext } from "../GameContext";
 import { StyleMenu } from "./styles";
 
 export default function Menu(){
 
-    const {user, getUser, signout} = useContext(AuthContext);
+    const {user, getUser, signout } = useContext(AuthContext);
+    const {uuid, socket, startGame } = useContext(GameContext);
     const [register, setRegister] = useState(false);
 
     useEffect(()=>{
         if(!user){
             getUser();
         }
-    },[user]);
+    },[user, getUser]);
 
     const changeRegister = ()=>{
         setRegister(!register);
     }
     const clickSair =()=>{
+        if(startGame){
+            socket.emit('go_out_player', {
+                uuid,
+                user: user.name,
+            });
+        }
         signout();
     }
     return( 
