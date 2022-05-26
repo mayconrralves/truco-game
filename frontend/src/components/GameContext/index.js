@@ -13,7 +13,8 @@ export default function Game({ children }){
    const [goOutGame, setGoOutGame ] = useState(false);
    const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
    const [userGoOut, setUserGoOut] = useState(null);
-   const [updateList, setUpdateList] = useState(false);   
+   const [updateList, setUpdateList] = useState(false);
+   const [myGame, setMyGame] = useState(null);
 
 
    const startSocket = useCallback(()=>{
@@ -26,6 +27,7 @@ export default function Game({ children }){
          //game created 
          connected.on('created_game', data=>{
             setUuid(data.room);
+            setMyGame(data.game);
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
@@ -40,7 +42,7 @@ export default function Game({ children }){
             setUuid(data.room);           
          });
          connected.on('full_game', data=>{
-           setUpdateList(true);
+            setUpdateList(true);
          });
          //list of created games
          connected.on('list_games', data=>{
@@ -64,20 +66,24 @@ export default function Game({ children }){
            setUpdateList(true);
            setUuid(null);
          });
-         connected.on('full_game', data=>{
-            setUpdateList(true);
-         });
          connected.on('end_game', ()=>{
             setPlayersJoin([]);
             setUuid(null);
             setUpdateList(true);
             setStartGame(false);
+            setMyGame(null);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
             setUpdateList(true);
             setUuid(null);
             setStartGame(false);
+            setMyGame(null);
+         });
+         connected.on('success_cancelled',()=>{
+            setUuid(false);
+            setMyGame(null);
+            setUpdateList(true);
          });
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);
@@ -102,6 +108,7 @@ export default function Game({ children }){
        setOtherGoOutPlayer,
        userGoOut,
        updateList,
+       myGame,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }

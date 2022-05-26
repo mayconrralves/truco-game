@@ -4,15 +4,18 @@ import { AuthContext } from '../AuthContext';
 import { GameContext } from '../GameContext';
 import ListGames from '../ListGames';
 import ModalGame from '../ModalGame';
+import MyGame from '../MyGame';
 import { ConfigGameStyle } from './styles';
 export default function ConfigGame(){
     const { user } = useContext(AuthContext);
-    const { socket, 
+    const { 
+        socket, 
         uuid, 
         games, 
         connection, 
         startGame,
         updateList,
+        myGame,
     } = useContext(GameContext);
     
   
@@ -73,7 +76,9 @@ export default function ConfigGame(){
         setNameRoom(event.target.value);
     };
 
-    return (
+    return myGame ? (
+        <MyGame />
+    ) : (
         <ConfigGameStyle >
             <h2>Salas</h2>
             { openModal && <ModalGame  

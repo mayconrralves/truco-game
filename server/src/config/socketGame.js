@@ -19,6 +19,11 @@ export const initGame=async (socket, io)=>{
         socket.join(uuid);
         io.to(socket.id).emit('created_game', {
             room: uuid,
+            game: {
+                name,
+                user,
+                userId,
+            }
         });
         await clientRedis.set(socket.id, uuid);
         await clientRedis.set(uuid, JSON.stringify({name, user, userId, start: false}));
@@ -106,6 +111,15 @@ export const initGame=async (socket, io)=>{
         await clientRedis.del(socket.id);
         socket.to(uuid).emit('end_game');
         socket.to(uuid).emit('removed_uuid');
+        socket.leave(uuid);
+    });
+    //if a user cancelled your game
+    socket.on('cancelled_game', async ()=> {
+        const uuid = await clientRedis.get(socket.id);
+        io.to(socket.id).emit('success_cancelled');
+        socket.to(uuid).emit('removed_uuid');
+        await clientRedis.del(uuid);
+        await clientRedis.del(socket.id);
         socket.leave(uuid);
     });
 
