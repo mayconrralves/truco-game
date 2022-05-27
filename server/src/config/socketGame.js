@@ -1,7 +1,7 @@
 import {v4 as uuid4} from 'uuid';
 import { connectRedis } from '../config/redis';
 
-const NUM_PLAYERS = 3;
+const NUM_PLAYERS = 2;
 
 const listRooms = (socket) =>{
     let rooms = [];
