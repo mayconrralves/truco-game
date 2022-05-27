@@ -75,13 +75,16 @@ export default function Game({ children }){
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
-            setUpdateList(true);
             setUuid(null);
             setStartGame(false);
             setMyGame(null);
+            setUpdateList(true);
+         });
+         connected.on('game_cancelled', ()=>{
+            setUpdateList(true);
          });
          connected.on('success_cancelled',()=>{
-            setUuid(false);
+            setUuid(null);
             setMyGame(null);
             setUpdateList(true);
          });

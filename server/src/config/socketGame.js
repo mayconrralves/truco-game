@@ -1,7 +1,7 @@
 import {v4 as uuid4} from 'uuid';
 import { connectRedis } from '../config/redis';
 
-const NUM_PLAYERS = 2;
+const NUM_PLAYERS = 3;
 
 const listRooms = (socket) =>{
     let rooms = [];
@@ -116,13 +116,12 @@ export const initGame=async (socket, io)=>{
     //if a user cancelled your game
     socket.on('cancelled_game', async ()=> {
         const uuid = await clientRedis.get(socket.id);
+        socket.broadcast.emit('game_cancelled');
         io.to(socket.id).emit('success_cancelled');
-        socket.to(uuid).emit('removed_uuid');
         await clientRedis.del(uuid);
         await clientRedis.del(socket.id);
         socket.leave(uuid);
     });
-
     socket.on('disconnect', async()=>{
         const uuid = await clientRedis.get(socket.id);
         if(!uuid) return;
