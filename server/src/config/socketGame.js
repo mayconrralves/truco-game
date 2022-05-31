@@ -81,8 +81,8 @@ export const initGame=async (socket, io)=>{
         if(coin === 'heads') socket.on(uuid).emit('opponent_coin', { coin: 'tails'});
         else if(coin === 'tails') socket.on(uuid).emit('opponent_coin', {coin:'heads'});
         else {
-            socket.on(uuid).emit('msg', {
-                error: 'The coin chosen can only be tail or heads',
+            socket.on(uuid).emit('error', {
+                msg: 'The coin chosen can only be tail or heads',
                 event: 'choose_coin',
             });
         };
