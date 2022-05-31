@@ -77,7 +77,17 @@ export const initGame=async (socket, io)=>{
             socket.emit('full_game');
         }
     });
-
+    socket.on('choose_coin', ({coin, uuid})=>{
+        if(coin === 'heads') socket.on(uuid).emit('opponent_coin', { coin: 'tails'});
+        else if(coin === 'tails') socket.on(uuid).emit('opponent_coin', {coin:'heads'});
+        else {
+            socket.on(uuid).emit('msg', {
+                error: 'The coin chosen can only be tail or heads',
+                event: 'choose_coin',
+            });
+        };
+        return;
+    })
     socket.on('list_created_games',async ()=>{
         const rooms = listRooms(socket);
        const games = [];

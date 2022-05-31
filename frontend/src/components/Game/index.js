@@ -1,8 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
 import { GameContext } from '../GameContext';
 import { AuthContext } from '../AuthContext';
 import ModalGame from "../ModalGame";
+import SelectCoin from "../SelectCoin";
 export default function Game(){
     const  {
         uuid,
@@ -11,11 +12,13 @@ export default function Game(){
         goOutGame,
         otherGoOutPlayer,
         userGoOut,
-        startGame, 
+        startGame,
+        myGame,
         socket
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
+    const [ coin, setCoin ] = useState(null);
     const history = useHistory();
     useEffect(()=>{
         const listen = (location, action)=>{
@@ -43,8 +46,16 @@ export default function Game(){
     const cancelledButton = ()=> {
         setGoOutGame(false);
     }
+    const selectCoin = (coin)=> {
+        setCoin(coin)
+    }
     return (
         <div>
+             {(startGame && myGame && !coin) && <ModalGame 
+                                                labelDescription={'Escolhar par ou Impar'}
+                                                component={<SelectCoin  onSelectCoin={selectCoin}/>}
+                                            />
+            }
             {otherGoOutPlayer && <ModalGame  
                                 labelDescription={`${userGoOut} saiu da sala.`}
                                 buttonDescription='Sair'

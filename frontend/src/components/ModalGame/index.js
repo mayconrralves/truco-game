@@ -7,16 +7,18 @@ export default function ModalGame({
                                         onClickCancelled,
                                         onClickButton, 
                                         buttonDescription, 
-                                        labelDescription 
+                                        labelDescription,
+                                        component
                                   }){ 
     
     return (
         <ModalGameStyle >
             <div>
                 { labelDescription && <label>{labelDescription}</label> }
+                { component }
                 { onChangeInput && <input onChange={ onChangeInput } placeholder={placeholder} /> }
                 <div>
-                      <button onClick={ onClickButton }>{ buttonDescription }</button>
+                     {buttonDescription && <button onClick={ onClickButton }>{ buttonDescription }</button>}
                       { onClickCancelled && <button onClick={ onClickCancelled }>Cancelar</button>}
                 </div>
             </div>

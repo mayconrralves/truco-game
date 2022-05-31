@@ -15,6 +15,7 @@ export default function Game({ children }){
    const [userGoOut, setUserGoOut] = useState(null);
    const [updateList, setUpdateList] = useState(false);
    const [myGame, setMyGame] = useState(null);
+   const [coin, setCoin ] = useState(null);
 
 
    const startSocket = useCallback(()=>{
@@ -28,6 +29,7 @@ export default function Game({ children }){
          connected.on('created_game', data=>{
             setUuid(data.room);
             setMyGame(data.game);
+            setCoin(null);
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
@@ -36,10 +38,11 @@ export default function Game({ children }){
          //the user added to the room
          connected.on('success_join', data=>{
             setPlayersJoin(playersJoin=> [...playersJoin, data]);
+            setCoin(null);
          });
          connected.on('joined',data=>{
             setPlayersJoin(playersJoin=> [...playersJoin, data ]);
-            setUuid(data.room);           
+            //setUuid(data.room);
          });
          connected.on('full_game', data=>{
             setUpdateList(true);
@@ -57,6 +60,9 @@ export default function Game({ children }){
             setUserGoOut(null);
             setUpdateList(false);
          });
+         connected.on('oponnent_coin', data=>{
+            setCoin(data.coin);
+         });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
            setStartGame(false);
@@ -65,6 +71,7 @@ export default function Game({ children }){
            setPlayersJoin([]);
            setUpdateList(true);
            setUuid(null);
+           setCoin(null);
          });
          connected.on('end_game', ()=>{
             setPlayersJoin([]);
@@ -72,6 +79,7 @@ export default function Game({ children }){
             setUpdateList(true);
             setStartGame(false);
             setMyGame(null);
+            setCoin(null);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
@@ -79,14 +87,17 @@ export default function Game({ children }){
             setStartGame(false);
             setMyGame(null);
             setUpdateList(true);
+            setCoin(null);
          });
          connected.on('game_cancelled', ()=>{
             setUpdateList(true);
+            setCoin(null);
          });
          connected.on('success_cancelled',()=>{
             setUuid(null);
             setMyGame(null);
             setUpdateList(true);
+            setCoin(null);
          });
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);
@@ -112,6 +123,7 @@ export default function Game({ children }){
        userGoOut,
        updateList,
        myGame,
+       coin,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }
