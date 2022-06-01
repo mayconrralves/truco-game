@@ -16,12 +16,15 @@ export default function Game(){
         myGame,
         socket,
         coin: coinOpponent,
+        secondPlayer,
+        firstPlayer,
+        playersJoin
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
     const [ coin, setCoin ] = useState(null);
+    const [openModalPlayer, setOpenModalPlayer] = useState(true);
     const history = useHistory();
-
     useEffect(()=>{
         if(coinOpponent){
             setCoin(coinOpponent);
@@ -50,6 +53,10 @@ export default function Game(){
         });
         history.goBack();
     }
+    const start = ()=>{
+        setOpenModalPlayer(false);
+
+    }
     //if a player leaves of game
     const returnConfigGame=()=>{
         history.goBack();
@@ -66,6 +73,23 @@ export default function Game(){
     }
     return (
         <div>
+            {
+                (openModalPlayer && firstPlayer) && <ModalGame 
+                labelDescription='Você irá começar'
+                onClickButton={ start }
+                buttonDescription='Ok'
+            />
+            }
+             {
+                (openModalPlayer && secondPlayer) && <ModalGame 
+                labelDescription={`${
+                                        playersJoin[0].name.toUpperCase()} 
+                                        venceu na moeda. Você será o Segundo a jogar`
+                                    }
+                onClickButton={ ()=> setOpenModalPlayer(false) }
+                buttonDescription='Ok'
+            />
+            }
             {
                 (startGame && coin && !myGame) && <ModalGame 
                     labelDescription={`Seu lado da moeda é ${coin}`}

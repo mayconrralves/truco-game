@@ -16,6 +16,8 @@ export default function Game({ children }){
    const [updateList, setUpdateList] = useState(false);
    const [myGame, setMyGame] = useState(null);
    const [coin, setCoin ] = useState(null);
+   const [firstPlayer, setFirstPlayer ] = useState(false);
+   const [secondPlayer, setSecondPlayer ] = useState(false);
 
 
    const startSocket = useCallback(()=>{
@@ -59,15 +61,19 @@ export default function Game({ children }){
             setOtherGoOutPlayer(false);
             setUserGoOut(null);
             setUpdateList(false);
+            setFirstPlayer(false);
+            setSecondPlayer(false);
          });
          connected.on('opponent_coin', data=>{
             setCoin(data.coin);
          });
          connected.on('second_player',()=>{
             setCoin(null);
+            setSecondPlayer(true);
          });
          connected.on('winner_coin', ()=>{
             setCoin(null);
+            setFirstPlayer(true);
          });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
@@ -130,6 +136,8 @@ export default function Game({ children }){
        updateList,
        myGame,
        coin,
+       firstPlayer,
+       secondPlayer,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }
