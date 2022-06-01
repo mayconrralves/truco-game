@@ -14,19 +14,30 @@ export default function Game(){
         userGoOut,
         startGame,
         myGame,
-        socket
+        socket,
+        coin: coinOpponent,
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
     const [ coin, setCoin ] = useState(null);
     const history = useHistory();
+
+    useEffect(()=>{
+        if(coinOpponent){
+            setCoin(coinOpponent);
+            socket.emit('what_winner_coin', {
+                coin: coinOpponent,
+                uuid,
+            });
+        }
+    },[coinOpponent, uuid, socket]);
+    
     useEffect(()=>{
         const listen = (location, action)=>{
             if(action === 'POP'){
                 setGoOutGame(true);
             }
         }
-        
         const clearListen = history.listen(listen);
         return clearListen;
     },[history, setGoOutGame]);
@@ -47,10 +58,21 @@ export default function Game(){
         setGoOutGame(false);
     }
     const selectCoin = (coin)=> {
-        setCoin(coin)
+        setCoin(coin);
+        socket.emit('choose_coin', {
+            coin,
+            uuid,
+        })
     }
     return (
         <div>
+            {
+                (startGame && coin && !myGame) && <ModalGame 
+                    labelDescription={`Seu lado da moeda é ${coin}`}
+                    onClickButton={()=> setCoin(null) }
+                    buttonDescription='Ok'
+                />
+            }
              {(startGame && myGame && !coin) && <ModalGame 
                                                 labelDescription={'Escolhar par ou Impar'}
                                                 component={<SelectCoin  onSelectCoin={selectCoin}/>}
@@ -69,7 +91,6 @@ export default function Game(){
                                 onClickCancelled={cancelledButton}
                           />
             }
-            GameGame
         </div>
     )
 }

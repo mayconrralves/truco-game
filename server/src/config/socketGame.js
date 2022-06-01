@@ -78,16 +78,32 @@ export const initGame=async (socket, io)=>{
         }
     });
     socket.on('choose_coin', ({coin, uuid})=>{
-        if(coin === 'heads') socket.on(uuid).emit('opponent_coin', { coin: 'tails'});
-        else if(coin === 'tails') socket.on(uuid).emit('opponent_coin', {coin:'heads'});
+        if(coin === 'heads') socket.to(uuid).emit('opponent_coin', { coin: 'tails'});
+        else if(coin === 'tails') socket.to(uuid).emit('opponent_coin', {coin:'heads'});
         else {
-            socket.on(uuid).emit('error', {
+            socket.to(uuid).emit('error', {
                 msg: 'The coin chosen can only be tail or heads',
                 event: 'choose_coin',
             });
         };
+       
         return;
-    })
+    });
+    socket.on('what_winner_coin', ({coin, uuid})=>{
+        const coins = {
+            0: 'heads',
+            1: 'tails',
+        }
+        const coinWinner = coins[Math.floor(Math.random()*2)];
+        if(coinWinner === coin){
+            io.to(socket.id).emit('winner_coin');
+            socket.to(uuid).emit('second_player');
+        }
+        else {
+            socket.to(uuid).emit('winner_coin');
+            io.to(socket.id).emit('second_player');
+        }
+    });
     socket.on('list_created_games',async ()=>{
         const rooms = listRooms(socket);
        const games = [];

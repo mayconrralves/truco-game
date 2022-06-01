@@ -60,8 +60,14 @@ export default function Game({ children }){
             setUserGoOut(null);
             setUpdateList(false);
          });
-         connected.on('oponnent_coin', data=>{
+         connected.on('opponent_coin', data=>{
             setCoin(data.coin);
+         });
+         connected.on('second_player',()=>{
+            setCoin(null);
+         });
+         connected.on('winner_coin', ()=>{
+            setCoin(null);
          });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
