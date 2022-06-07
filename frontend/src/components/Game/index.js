@@ -4,6 +4,9 @@ import { GameContext } from '../GameContext';
 import { AuthContext } from '../AuthContext';
 import ModalGame from "../ModalGame";
 import SelectCoin from "../SelectCoin";
+import Hand from "../Hand";
+import Field from "../Field";
+import { buildDeck } from "../../utils";
 export default function Game(){
     const  {
         uuid,
@@ -18,7 +21,7 @@ export default function Game(){
         coin: coinOpponent,
         secondPlayer,
         firstPlayer,
-        playersJoin
+        playersJoin,
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
@@ -55,7 +58,19 @@ export default function Game(){
     }
     const start = ()=>{
         setOpenModalPlayer(false);
-
+        const deck = buildDeck();
+            socket.emit('shuffled_deck', {
+               game: {
+                    deck,
+                    hands: {
+                        player1: null,
+                        player2: null,
+                    },
+                    field: null,
+                    uuid,
+               },
+               firstPlayer,
+            });
     }
     //if a player leaves of game
     const returnConfigGame=()=>{
@@ -115,6 +130,9 @@ export default function Game(){
                                 onClickCancelled={cancelledButton}
                           />
             }
+            {(firstPlayer || secondPlayer) && <Hand opponent/>}
+            {(firstPlayer || secondPlayer) && <Field />}
+            {(firstPlayer || secondPlayer) && <Hand />}
         </div>
     )
 }

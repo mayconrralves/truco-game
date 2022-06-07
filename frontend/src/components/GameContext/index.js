@@ -18,6 +18,8 @@ export default function Game({ children }){
    const [coin, setCoin ] = useState(null);
    const [firstPlayer, setFirstPlayer ] = useState(false);
    const [secondPlayer, setSecondPlayer ] = useState(false);
+   const [ shuffed, setShuffled ] = useState(false);
+   const [stateGame, setStateGame ] = useState(null);
 
 
    const startSocket = useCallback(()=>{
@@ -32,6 +34,8 @@ export default function Game({ children }){
             setUuid(data.room);
             setMyGame(data.game);
             setCoin(null);
+            setShuffled(false);
+            setStateGame(null);
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
@@ -92,6 +96,8 @@ export default function Game({ children }){
             setStartGame(false);
             setMyGame(null);
             setCoin(null);
+            setShuffled(false);
+            setStateGame(null);
          });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
@@ -100,22 +106,70 @@ export default function Game({ children }){
             setMyGame(null);
             setUpdateList(true);
             setCoin(null);
+            setShuffled(false);
+            setStateGame(null);
          });
          connected.on('game_cancelled', ()=>{
             setUpdateList(true);
             setCoin(null);
+            setShuffled(false);
+            setStateGame(null);
          });
          connected.on('success_cancelled',()=>{
             setUuid(null);
             setMyGame(null);
             setUpdateList(true);
             setCoin(null);
+            setShuffled(false);
+            setStateGame(null);
          });
+         connected.on('shuffled_deck', data=>{
+            setStateGame(data);
+            setShuffled(true);
+         });
+         connected.on('draw_player1',data=>{
+            const draftDeck = data.deck;
+            const hand = draftDeck.splice(0,3);
+            const state =  {
+               deck: draftDeck,
+               uuid:data.uuid,
+               hands: {
+                  ...data.hands,
+                  player1: hand,
+               },
+               field: null,
+            };
+            setStateGame( state );
+            connected.emit('drew_player1', {
+               ...state
+            });
+         });
+         connected.on('draw_player2', data=>{
+            const draftDeck = data.deck;
+            const hand = draftDeck.splice(0,3);
+            const state = {
+               deck: draftDeck,
+               uuid: data.uuid,
+               hands: {
+                  ...data.hands,
+                  player2: hand,
+               },
+               field: null,
+            };
+            setStateGame( state );
+            connected.emit('drew_player2', {
+               ...state
+            });
+         });
+         connected.on('first_move', data=>{
+            
+         });
+         
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);
          });
          setSocket(connected);
-         }
+      }
    },[ socket ]);
    useEffect(()=>{
       startSocket();   
@@ -138,6 +192,8 @@ export default function Game({ children }){
        coin,
        firstPlayer,
        secondPlayer,
+       shuffed,
+       stateGame,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }
