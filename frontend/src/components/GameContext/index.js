@@ -161,6 +161,9 @@ export default function Game({ children }){
                ...state
             });
          });
+         connected.on('end_draw', data=>{
+            setStateGame(data);
+         });
          connected.on('first_move', data=>{
             
          });

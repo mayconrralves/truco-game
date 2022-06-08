@@ -134,6 +134,7 @@ export const initGame=async (socket, io)=>{
         socket.to(data.uuid).emit('draw_player2', data);
     });
     socket.on('drew_player2', data=>{
+        socket.to(data.uuid).emit('end_draw', data);
         socket.to(data.uuid).emit('first_move', data);
     });
     socket.on('go_out_player', async ({uuid, user})=>{
