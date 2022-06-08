@@ -1,7 +1,12 @@
 import React from 'react'
-import verso from '../assets/cards/verso.jpg';
+import { printCard } from '../../utils';
+import { StyleCard } from './styles';
  
  
-export default function Card() {
-    return <div></div>
+export default function Card({ card }) {
+    return (
+        <StyleCard>
+            { <img src={printCard( card )} /> } 
+        </StyleCard>
+    )
 }

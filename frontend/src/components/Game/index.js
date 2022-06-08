@@ -22,6 +22,7 @@ export default function Game(){
         secondPlayer,
         firstPlayer,
         playersJoin,
+        stateGame,
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
@@ -86,6 +87,21 @@ export default function Game(){
             uuid,
         })
     }
+    const handPlayer = () => {
+        if(firstPlayer){
+            return stateGame.hands.player1;
+        }
+        else {
+            return stateGame.hands.player2;
+        }
+    }
+    const lengthHandOpponent = ()=> {
+        if(secondPlayer){
+            return stateGame.hands.player1?.length || 0;
+        } else {
+            return stateGame.hands.player2?.length || 0;
+        }
+    }
     return (
         <div>
             {
@@ -130,9 +146,9 @@ export default function Game(){
                                 onClickCancelled={cancelledButton}
                           />
             }
-            {(firstPlayer || secondPlayer) && <Hand opponent/>}
-            {(firstPlayer || secondPlayer) && <Field />}
-            {(firstPlayer || secondPlayer) && <Hand />}
+            {stateGame?.hands && <Hand opponent quantityCardsOpponentHand={lengthHandOpponent()}/>}
+            {startGame?.hands && <Field />}
+            {(stateGame?.hands.player1 || stateGame?.hands.player2)   && <Hand cards={handPlayer()} />}
         </div>
     )
 }

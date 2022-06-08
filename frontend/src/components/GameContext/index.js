@@ -164,6 +164,9 @@ export default function Game({ children }){
          connected.on('first_move', data=>{
             
          });
+         connected.on('next_move',data=> {
+            
+         })
          
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);
