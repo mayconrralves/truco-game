@@ -3,9 +3,9 @@ import { printCard } from '../../utils';
 import { StyleCard } from './styles';
  
  
-export default function Card({ card }) {
+export default function Card({ card, opacity}) {
     return (
-        <StyleCard>
+        <StyleCard >
             { <img src={printCard( card )} /> } 
         </StyleCard>
     )

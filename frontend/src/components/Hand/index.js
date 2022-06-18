@@ -1,15 +1,30 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Card from "../Card";
-import { StyleField } from "../Field/styles";
 import { GameContext } from "../GameContext";
+import { StyleHand } from "./styles";
 
 
 export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
+    const [ opacity,  setOpacity ] = useState('1');
     const { socket } = useContext(GameContext);
+    const onHandleDragStart = (event, card) => {
+        setOpacity('0.4');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', JSON.stringify(card));
+    }
+    const onHandleDragEnd = event => {
+        setOpacity('1');
+    }
+
     const printHand = ()=>{
         return cards.map((card, i)=>{
             return (
-                <li key={'my_hand_'+ i}>
+                <li key={'my_hand_'+ i}
+                    opacity={ opacity } 
+                    draggable={ true } 
+                    onDragStart={event=>onHandleDragStart(event, card)} 
+                    onDragEnd={onHandleDragEnd}
+                >
                     <Card card={card} />
                 </li>
             )
@@ -26,16 +41,17 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
         }
         return list;
     }
+   
     if(opponent){
         return (
-            <StyleField>
+            <StyleHand>
                 { printVerso() }
-            </StyleField>
+            </StyleHand>
         )
     }
     return (
-            <StyleField>
-                {printHand()}
-            </StyleField>
+            <StyleHand opacity={opacity} >
+                { printHand() }
+            </StyleHand>
     )
 }

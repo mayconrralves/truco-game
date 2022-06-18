@@ -7,6 +7,7 @@ import SelectCoin from "../SelectCoin";
 import Hand from "../Hand";
 import Field from "../Field";
 import { buildDeck } from "../../utils";
+import { StyleGame } from "./styles";
 export default function Game(){
     const  {
         uuid,
@@ -103,7 +104,7 @@ export default function Game(){
         }
     }
     return (
-        <div>
+        <StyleGame>
             {
                 (openModalPlayer && firstPlayer) && <ModalGame 
                 labelDescription='Você irá começar'
@@ -146,9 +147,13 @@ export default function Game(){
                                 onClickCancelled={cancelledButton}
                           />
             }
-            {stateGame?.hands && <Hand opponent quantityCardsOpponentHand={lengthHandOpponent()}/>}
-            {startGame?.hands && <Field />}
-            {(stateGame?.hands.player1 || stateGame?.hands.player2)   && <Hand cards={handPlayer()} />}
-        </div>
+            {(stateGame?.hands.player1 || stateGame?.hands.player2)  && <>
+                    <Hand opponent quantityCardsOpponentHand={lengthHandOpponent()}/>
+                    <Field />
+                    <Hand cards={handPlayer()} />
+                </>
+            }
+          
+        </StyleGame>
     )
 }

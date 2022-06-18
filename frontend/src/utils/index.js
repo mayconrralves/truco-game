@@ -45,9 +45,9 @@ export const CardsRank = {
     {naipe:'copas', rank: 12, name: 'sete de copas'}, 
     {naipe: 'ouros', rank: 11, name: 'sete de ouros'}, 
   ],
-  11: [{rank: 5}],
-  12: [{rank: 6}],
-  13: [{rank: 7}]
+  11: [{rank: 5, name: 'valete'} ],
+  12: [{rank: 6, name: 'rainha'} ],
+  13: [{rank: 7, name: 'rei'} ]
 };
 //import all images
 export function importAll(r) {
