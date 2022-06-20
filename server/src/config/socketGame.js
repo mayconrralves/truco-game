@@ -137,6 +137,9 @@ export const initGame=async (socket, io)=>{
         socket.to(data.uuid).emit('end_draw', data);
         socket.to(data.uuid).emit('first_move', data);
     });
+    socket.on('next_move', data=> {
+        io.in(data.uuid).emit('update_state_game',data);
+    });
     socket.on('go_out_player', async ({uuid, user})=>{
         const data = await clientRedis.get(uuid);
         socket.to(uuid).emit('go_out_player', {

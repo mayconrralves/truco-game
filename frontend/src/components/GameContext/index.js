@@ -167,8 +167,8 @@ export default function Game({ children }){
          connected.on('first_move', data=>{
             
          });
-         connected.on('next_move',data=> {
-            
+         connected.on('update_state_game',data=> {
+            setStateGame(data);
          })
          
          connected.on('error', (data)=>{

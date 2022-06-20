@@ -1,12 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Card from "../Card";
-import { GameContext } from "../GameContext";
 import { StyleHand } from "./styles";
 
 
 export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
     const [ opacity,  setOpacity ] = useState('1');
-    const { socket } = useContext(GameContext);
     const onHandleDragStart = (event, card) => {
         setOpacity('0.4');
         event.dataTransfer.effectAllowed = 'move';
@@ -21,7 +19,7 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
             return (
                 <li key={'my_hand_'+ i}
                     opacity={ opacity } 
-                    draggable={ true } 
+                    draggable={ true }
                     onDragStart={event=>onHandleDragStart(event, card)} 
                     onDragEnd={onHandleDragEnd}
                 >
