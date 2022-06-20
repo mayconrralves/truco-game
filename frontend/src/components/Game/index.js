@@ -115,7 +115,7 @@ export default function Game(){
              {
                 (openModalPlayer && secondPlayer) && <ModalGame 
                 labelDescription={`${
-                                        playersJoin[0].name.toUpperCase()} 
+                                        playersJoin[0].user.toUpperCase()} 
                                         venceu na moeda. Você será o Segundo a jogar`
                                     }
                 onClickButton={ ()=> setOpenModalPlayer(false) }
