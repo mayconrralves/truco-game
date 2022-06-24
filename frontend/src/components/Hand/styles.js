@@ -2,15 +2,18 @@ import styled from "styled-components";
 
 export const StyleHand = styled.ul`
     width: 80vw;
-    height: auto;
+    height: 25vh;
     display: flex;
     flex-direction: row;
-    align-items: center;
     justify-content: center;
     list-style-type: none;
+    padding: 8px 0 ;
     li {
         width: auto;
-        height: auto;
-        opacity: ${props=>props.opacity};
+        height: auto;  
+        &#${ props =>  props.id_card }{
+            opacity: 0.4;
+        }
+        
     }
 `;

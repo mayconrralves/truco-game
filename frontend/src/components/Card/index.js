@@ -3,10 +3,10 @@ import { printCard } from '../../utils';
 import { StyleCard } from './styles';
  
  
-export default function Card({ card, opacity}) {
+export default function Card({ card }) {
     return (
         <StyleCard >
-            { <img src={printCard( card )} /> } 
+            { <img src={printCard( card )} alt='card'/> } 
         </StyleCard>
     )
 }

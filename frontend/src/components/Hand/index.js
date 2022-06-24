@@ -4,23 +4,25 @@ import { StyleHand } from "./styles";
 
 
 export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
-    const [ opacity,  setOpacity ] = useState('1');
-    const onHandleDragStart = (event, card) => {
-        setOpacity('0.4');
+    const [selectCard, setSelectCard ] = useState(null);
+    const onHandleDragStart = (event, card, id) => {
         event.dataTransfer.effectAllowed = 'move';
         event.dataTransfer.setData('text/plain', JSON.stringify(card));
+        setSelectCard(id);
     }
     const onHandleDragEnd = event => {
-        setOpacity('1');
+        setSelectCard(null);
     }
+  
 
     const printHand = ()=>{
         return cards.map((card, i)=>{
+            const idCard = 'my_hand_'+ i;
             return (
-                <li key={'my_hand_'+ i}
-                    opacity={ opacity } 
+                <li key={idCard}
+                    id={idCard}
                     draggable={ true }
-                    onDragStart={event=>onHandleDragStart(event, card)} 
+                    onDragStart={event=>onHandleDragStart(event, card, idCard)} 
                     onDragEnd={onHandleDragEnd}
                 >
                     <Card card={card} />
@@ -30,7 +32,7 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
     }
     const printVerso = ()=> {
         const list = [];
-        for(let i=0; i< quantityCardsOpponentHand; i++){
+        for(let i=0; i < quantityCardsOpponentHand; i++){
             list.push(
                         <li key={'opponent_hand_'+i}>
                             <Card card='verso' />
@@ -42,13 +44,13 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
    
     if(opponent){
         return (
-            <StyleHand>
+            <StyleHand >
                 { printVerso() }
             </StyleHand>
         )
     }
     return (
-            <StyleHand opacity={opacity} >
+            <StyleHand id_card={selectCard} >
                 { printHand() }
             </StyleHand>
     )
