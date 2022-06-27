@@ -93,7 +93,7 @@ export const initGame=async (socket, io)=>{
         const coins = {
             0: 'heads',
             1: 'tails',
-        }
+        };
         const coinWinner = coins[Math.floor(Math.random()*2)];
         if(coinWinner === coin){
             io.to(socket.id).emit('winner_coin');
@@ -123,12 +123,7 @@ export const initGame=async (socket, io)=>{
     });
     socket.on('shuffled_deck', data=>{
         io.in(data.game.uuid).emit('shuffled_deck',data.game);
-        if(data.firstPlayer){
-            io.to(socket.id).emit('draw_player1', data.game);
-        } 
-        else {
-            socket.to(uuid).emit('draw_player1', data.game);
-        }
+        io.to(socket.id).emit('draw_player1', data.game);
     });
     socket.on('drew_player1', data=>{
         socket.to(data.uuid).emit('draw_player2', data);

@@ -69,6 +69,7 @@ export default function Game(){
                         player2: null,
                     },
                     field: null,
+                    next: null,
                     uuid,
                },
                firstPlayer,
