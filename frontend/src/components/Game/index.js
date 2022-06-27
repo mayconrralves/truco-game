@@ -24,6 +24,7 @@ export default function Game(){
         firstPlayer,
         playersJoin,
         stateGame,
+        currentMove
      } = useContext(GameContext);
      
     const { user } = useContext(AuthContext);
@@ -150,8 +151,14 @@ export default function Game(){
             }
             {(stateGame?.hands.player1 || stateGame?.hands.player2)  && <>
                     <Hand opponent quantityCardsOpponentHand={lengthHandOpponent()}/>
-                    <Field />
-                    <Hand cards={handPlayer()} />
+                    <Field 
+                        socket={socket}
+                        firstPlayer={firstPlayer}
+                        secondPlayer={secondPlayer}
+                        currentMove={currentMove}
+                        stateGame={stateGame}
+                    />
+                    <Hand cards={handPlayer()} currentMove={currentMove} />
                 </>
             }
           

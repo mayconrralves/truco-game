@@ -20,7 +20,7 @@ export default function Game({ children }){
    const [secondPlayer, setSecondPlayer ] = useState(false);
    const [ shuffed, setShuffled ] = useState(false);
    const [stateGame, setStateGame ] = useState(null);
-
+   const [currentMove, setCurrentMove ] = useState(null);
 
    const startSocket = useCallback(()=>{
       //events
@@ -36,6 +36,7 @@ export default function Game({ children }){
             setCoin(null);
             setShuffled(false);
             setStateGame(null);
+            setCurrentMove(false);
          });
          //game created by user another user
          connected.on('room_uuid', game=>{
@@ -78,6 +79,7 @@ export default function Game({ children }){
          connected.on('winner_coin', ()=>{
             setCoin(null);
             setFirstPlayer(true);
+            setCurrentMove(true);
          });
          connected.on('go_out_player', data=>{
            setOtherGoOutPlayer(true);
@@ -108,6 +110,7 @@ export default function Game({ children }){
             setCoin(null);
             setShuffled(false);
             setStateGame(null);
+            setCurrentMove(false);
          });
          connected.on('game_cancelled', ()=>{
             setUpdateList(true);
@@ -122,6 +125,7 @@ export default function Game({ children }){
             setCoin(null);
             setShuffled(false);
             setStateGame(null);
+            setCurrentMove(false);
          });
          connected.on('shuffled_deck', data=>{
             setStateGame(data);
@@ -167,6 +171,9 @@ export default function Game({ children }){
          connected.on('update_state_game',data=> {
             setStateGame(data);
          });
+         connected.on('update_move', data=>{
+            setCurrentMove(data.move);
+         });
          
          connected.on('error', (data)=>{
             console.log('error', data.msg, data.event);
@@ -184,11 +191,8 @@ export default function Game({ children }){
        connection, 
        playersJoin, 
        startGame, 
-       setStartGame,
        goOutGame,
-       setGoOutGame,
        otherGoOutPlayer,
-       setOtherGoOutPlayer,
        userGoOut,
        updateList,
        myGame,
@@ -197,6 +201,10 @@ export default function Game({ children }){
        secondPlayer,
        shuffed,
        stateGame,
+       currentMove,
+       setStartGame,
+       setGoOutGame,
+       setOtherGoOutPlayer,
     };
     return <GameContext.Provider value={values}>{children}</GameContext.Provider>
 }

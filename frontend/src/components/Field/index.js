@@ -1,15 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, {  useState, useEffect } from "react";
 import Card from "../Card";
-import { GameContext } from '../GameContext';
 import { StyleField } from "./styles";
 
-export default function Field ({card}){
-    const { 
-        socket,
-        firstPlayer, 
-        secondPlayer,
-        stateGame,
-    } = useContext(GameContext);
+export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, currentMove }){
 
     const [currentCard, setCurrentCard ] = useState(null);
     useEffect(()=>{
@@ -58,16 +51,22 @@ export default function Field ({card}){
         event.stopPropagation(); 
         return false;
     }
-    const chooseCard = ()=> {
-        if(card ) return card;
-        if(currentCard) return currentCard;
-    }
-    return (
-        <StyleField
-            onDragOver={onDragOver}
-            onDrop={handleDrop}
-        >
-           { ( card || currentCard ) && <Card card={ chooseCard() } /> }
-        </StyleField>
-    )
+
+    if(currentMove){
+        return (
+            <StyleField
+                onDragOver={onDragOver}
+                onDrop={handleDrop}
+            >
+               { currentCard  && <Card card={ currentCard } /> }
+            </StyleField>
+        )
+
+    } 
+        return(
+            <StyleField>
+                {  currentCard && <Card card={ currentCard} /> }
+            </StyleField>
+        )
+    
 }

@@ -3,7 +3,7 @@ import Card from "../Card";
 import { StyleHand } from "./styles";
 
 
-export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
+export default function Hand ({ cards, opponent, quantityCardsOpponentHand, currentMove }){
     const [selectCard, setSelectCard ] = useState(null);
     const onHandleDragStart = (event, card, id) => {
         event.dataTransfer.effectAllowed = 'move';
@@ -18,12 +18,21 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand }){
     const printHand = ()=>{
         return cards.map((card, i)=>{
             const idCard = 'my_hand_'+ i;
-            return (
+            if(currentMove){
+               return (
                 <li key={idCard}
                     id={idCard}
                     draggable={ true }
                     onDragStart={event=>onHandleDragStart(event, card, idCard)} 
                     onDragEnd={onHandleDragEnd}
+                >
+                    <Card card={card} />
+                </li>
+               )
+            }
+            return (
+                <li key={idCard}
+                    id={idCard}
                 >
                     <Card card={card} />
                 </li>
