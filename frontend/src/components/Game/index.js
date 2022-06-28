@@ -8,6 +8,7 @@ import Hand from "../Hand";
 import Field from "../Field";
 import { buildDeck } from "../../utils";
 import { StyleGame } from "./styles";
+
 export default function Game(){
     const  {
         uuid,
@@ -105,6 +106,7 @@ export default function Game(){
             return stateGame.hands.player2?.length || 0;
         }
     }
+    
     return (
         <StyleGame>
             {
@@ -150,7 +152,11 @@ export default function Game(){
                           />
             }
             {(stateGame?.hands.player1 || stateGame?.hands.player2)  && <>
-                    <Hand opponent quantityCardsOpponentHand={lengthHandOpponent()}/>
+                    <Hand 
+                        opponent 
+                        quantityCardsOpponentHand={lengthHandOpponent()}
+                        currentMove={currentMove}
+                    />
                     <Field 
                         socket={socket}
                         firstPlayer={firstPlayer}

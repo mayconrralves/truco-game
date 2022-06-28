@@ -53,13 +53,13 @@ export default function Hand ({ cards, opponent, quantityCardsOpponentHand, curr
    
     if(opponent){
         return (
-            <StyleHand >
+            <StyleHand currentMove={currentMove} opponent={opponent}>
                 { printVerso() }
             </StyleHand>
         )
     }
     return (
-            <StyleHand id_card={selectCard} >
+            <StyleHand id_card={selectCard} currentMove={currentMove}>
                 { printHand() }
             </StyleHand>
     )
