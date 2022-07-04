@@ -122,8 +122,8 @@ export const initGame=async (socket, io)=>{
             });
     });
     socket.on('shuffled_deck', data=>{
-        io.in(data.game.uuid).emit('shuffled_deck',data.game);
-        io.to(socket.id).emit('draw_player1', data.game);
+        io.in(data.uuid).emit('shuffled_deck',data);
+        io.to(socket.id).emit('draw_player1', data);
     });
     socket.on('drew_player1', data=>{
         socket.to(data.uuid).emit('draw_player2', data);

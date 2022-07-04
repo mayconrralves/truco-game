@@ -64,7 +64,6 @@ export default function Game(){
         setOpenModalPlayer(false);
         const deck = buildDeck();
             socket.emit('shuffled_deck', {
-               game: {
                     deck,
                     hands: {
                         player1: null,
@@ -73,8 +72,7 @@ export default function Game(){
                     field: null,
                     next: null,
                     uuid,
-               },
-               firstPlayer,
+                    firstPlayer,
             });
     }
     //if a player leaves of game
