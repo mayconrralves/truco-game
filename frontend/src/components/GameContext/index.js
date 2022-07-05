@@ -173,6 +173,21 @@ export default function Game({ children }){
          });
          connected.on('update_move', data=>{
             setCurrentMove(data.move);
+            if(data.first || data.second){
+               const { game } = data;
+               const { hands } = game;
+               setFirstPlayer(data.first);
+               setSecondPlayer(data.second);
+
+               setStateGame({
+                  ...game,
+                  hands: {
+                     ...hands,
+                     player1: hands.player2,
+                     player2: hands.player1,
+                  }
+               });
+            }
          });
          
          connected.on('error', (data)=>{

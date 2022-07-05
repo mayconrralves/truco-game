@@ -25,21 +25,32 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
             const { hands, uuid } = stateGame;
             if(firstPlayer){
                 socket.emit('next_move', { 
-                    uuid,
-                    field: c,
-                    hands: {
-                        ...hands,
-                       player1:  updateHand(hands.player1, c),
-                    }
+                    game: {
+                        uuid,
+                        field: c,
+                        hands: {
+                            ...hands,
+                           player1:  updateHand(hands.player1, c),
+                        },
+                    },
+                    next: false,
                 });
             } else if(secondPlayer){
+                //define who is next
+                let next = false;
+                if(c.rank >= currentCard.rank){
+                    next = true;
+                }
                 socket.emit('next_move', {
-                    uuid,
-                    field: c,
-                    hands: {
-                        ...hands,
-                        player2: updateHand(hands.player2, c),
-                    } 
+                    game: {
+                        uuid,
+                        field: c,
+                        hands: {
+                            ...hands,
+                            player2: updateHand(hands.player2, c),
+                        } 
+                    },
+                    next,
                });
             }
         }catch(e){

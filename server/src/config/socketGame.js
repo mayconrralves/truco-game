@@ -133,9 +133,15 @@ export const initGame=async (socket, io)=>{
         socket.to(data.uuid).emit('first_move', data);
     });
     socket.on('next_move', data=> {
-        io.in(data.uuid).emit('update_state_game',data);
-        io.to(socket.id).emit('update_move', {move: false});
-        socket.to(data.uuid).emit('update_move', {move: true});
+        const { game } = data;
+        io.in(game.uuid).emit('update_state_game',game);
+        if(data.next){
+            io.to(socket.id).emit('update_move', {move: true, first: true, second: false, game });
+            socket.to(game.uuid).emit('update_move', {move: false, first: false, second: true, game });
+        }else {
+            io.to(socket.id).emit('update_move', {move: false});
+            socket.to(game.uuid).emit('update_move', {move: true });
+        }
     });
     socket.on('go_out_player', async ({uuid, user})=>{
         const data = await clientRedis.get(uuid);
