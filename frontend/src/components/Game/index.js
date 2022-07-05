@@ -2,28 +2,22 @@ import React, { useContext, useEffect, useState } from "react";
 import { useHistory } from 'react-router-dom';
 import { GameContext } from '../GameContext';
 import { AuthContext } from '../AuthContext';
-import ModalGame from "../ModalGame";
-import SelectCoin from "../SelectCoin";
+
 import Hand from "../Hand";
 import Field from "../Field";
 import { buildDeck } from "../../utils";
 import { StyleGame } from "./styles";
+import ConfigModalGame from "../ConfigModalGame";
 
 export default function Game(){
     const  {
         uuid,
         setStartGame, 
         setGoOutGame, 
-        goOutGame,
-        otherGoOutPlayer,
-        userGoOut,
-        startGame,
-        myGame,
         socket,
         coin: coinOpponent,
         secondPlayer,
         firstPlayer,
-        playersJoin,
         stateGame,
         currentMove
      } = useContext(GameContext);
@@ -79,9 +73,6 @@ export default function Game(){
     const returnConfigGame=()=>{
         history.goBack();
     }
-    const cancelledButton = ()=> {
-        setGoOutGame(false);
-    }
     const selectCoin = (coin)=> {
         setCoin(coin);
         socket.emit('choose_coin', {
@@ -104,51 +95,29 @@ export default function Game(){
             return stateGame.hands.player2?.length || 0;
         }
     }
+    const updateHand = (playerHand, currentCard) => {
+        const hand =  playerHand.filter(
+             (card)=> !(card.number === currentCard.number && 
+                 card.naipe === currentCard.naipe)
+        );
+             return hand;
+     }
     
     return (
         <StyleGame>
-            {
-                (openModalPlayer && firstPlayer) && <ModalGame 
-                labelDescription='Você irá começar'
-                onClickButton={ start }
-                buttonDescription='Ok'
+            <ConfigModalGame 
+                    coin={coin} 
+                    selectCoin={selectCoin} 
+                    openModalPlayer={openModalPlayer}
+                    returnConfigGame={returnConfigGame}
+                    goOutGameButton={goOutGameButton}
+                    start={start}
+                    setGoOutGame={setGoOutGame}
+                    firstPlayer={firstPlayer}
+                    secondPlayer={secondPlayer}
+                    setCoin={setCoin}
+                    setOpenModalPlayer={setOpenModalPlayer}
             />
-            }
-             {
-                (openModalPlayer && secondPlayer) && <ModalGame 
-                labelDescription={`${
-                                        playersJoin[0].user.toUpperCase()} 
-                                        venceu na moeda. Você será o Segundo a jogar`
-                                    }
-                onClickButton={ ()=> setOpenModalPlayer(false) }
-                buttonDescription='Ok'
-            />
-            }
-            {
-                (startGame && coin && !myGame) && <ModalGame 
-                    labelDescription={`Seu lado da moeda é ${coin}`}
-                    onClickButton={()=> setCoin(null) }
-                    buttonDescription='Ok'
-                />
-            }
-             {(startGame && myGame && !coin) && <ModalGame 
-                                                labelDescription={'Escolhar par ou Impar'}
-                                                component={<SelectCoin  onSelectCoin={selectCoin}/>}
-                                            />
-            }
-            {otherGoOutPlayer && <ModalGame  
-                                labelDescription={`${userGoOut} saiu da sala.`}
-                                buttonDescription='Sair'
-                                onClickButton={returnConfigGame}
-                          />
-            }
-            {(startGame && goOutGame) && <ModalGame
-                                labelDescription='Você quer sair do jogo?'
-                                buttonDescription='Sair'
-                                onClickButton={goOutGameButton}
-                                onClickCancelled={cancelledButton}
-                          />
-            }
             {(stateGame?.hands.player1 || stateGame?.hands.player2)  && <>
                     <Hand 
                         opponent 
@@ -161,6 +130,7 @@ export default function Game(){
                         secondPlayer={secondPlayer}
                         currentMove={currentMove}
                         stateGame={stateGame}
+                        updateHand={updateHand}
                     />
                     <Hand cards={handPlayer()} currentMove={currentMove} />
                 </>

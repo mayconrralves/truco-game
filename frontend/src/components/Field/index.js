@@ -2,7 +2,7 @@ import React, {  useState, useEffect } from "react";
 import Card from "../Card";
 import { StyleField } from "./styles";
 
-export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, currentMove }){
+export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, currentMove, updateHand }){
 
     const [currentCard, setCurrentCard ] = useState(null);
     useEffect(()=>{
@@ -10,13 +10,7 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
             setCurrentCard(stateGame.field);
         }
     }, [ stateGame ] );
-    const updateHand = (playerHand, currentCard) => {
-       const hand =  playerHand.filter(
-            (card)=> !(card.number === currentCard.number && 
-                card.naipe === currentCard.naipe)
-       );
-            return hand;
-    }
+    
     const handleDrop = event => {
         const data = event.dataTransfer.getData('text/plain');
         try{
