@@ -11,7 +11,6 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
         }
     }, [ stateGame ] );
     const winFirst = (player1, opponent)=>{
-        console.log(player1, opponent, player1.match === 0, opponent.match === 0)
         if(player1.match === 0 && opponent.match === 0){
            return true;
         }
