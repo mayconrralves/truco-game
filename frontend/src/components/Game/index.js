@@ -67,10 +67,12 @@ export default function Game(){
                         player1: {
                             match: 0,
                             game: 0,
+                            winFirst: false,
                         },
                         player2: {
                             match: 0,
                             game: 0,
+                            winFirst: false,
                         },
                     },
                     field: null,

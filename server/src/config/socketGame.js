@@ -134,7 +134,6 @@ export const initGame=async (socket, io)=>{
     });
     socket.on('next_move', data=> {
         const { game } = data;
-        console.log(data)
         io.in(game.uuid).emit('update_state_game',game);
         if(data.next){
             io.to(socket.id).emit('update_move', {move: true, first: true, second: false, game });

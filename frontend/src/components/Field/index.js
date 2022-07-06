@@ -10,7 +10,13 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
             setCurrentCard(stateGame.field);
         }
     }, [ stateGame ] );
-    
+    const winFirst = (player1, opponent)=>{
+        console.log(player1, opponent, player1.match === 0, opponent.match === 0)
+        if(player1.match === 0 && opponent.match === 0){
+           return true;
+        }
+        return false;
+    }
     const handleDrop = event => {
         const data = event.dataTransfer.getData('text/plain');
         try{
@@ -25,7 +31,7 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
                         field: c,
                         hands: {
                             ...hands,
-                           player1:  updateHand(hands.player1, c),
+                            player1:  updateHand(hands.player1, c),
                         },
                     },
                     next: false,
@@ -34,7 +40,25 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
                 //define who is next
                 let next = false;
                 if(c.rank > currentCard.rank){
+                    if(winFirst(stateGame.scores.player2, stateGame.scores.player1)){
+                        stateGame.scores.player2.winFirst = true;
+                    }
+                    stateGame.scores.player2.match++;
                     next = true;
+                } 
+                else if(c.rank < currentCard.rank){
+                    if(winFirst(stateGame.scores.player1, stateGame.scores.player2)){
+                        stateGame.scores.player1.winFirst = true;
+                    }
+                    stateGame.scores.player1.match++;
+                } 
+                else {
+                    const { player1, player2 } = stateGame.scores;
+                    if( player1.winFirst ){
+                        player1.match++;
+                    }else if( player2.winFirst ){
+                        player2.match++;
+                    }
                 }
                 socket.emit('next_move', {
                     game: {
