@@ -63,8 +63,17 @@ export default function Game(){
                         player1: null,
                         player2: null,
                     },
+                    scores: {
+                        player1: {
+                            match: 0,
+                            game: 0,
+                        },
+                        player2: {
+                            match: 0,
+                            game: 0,
+                        },
+                    },
                     field: null,
-                    next: null,
                     uuid,
                     firstPlayer,
             });

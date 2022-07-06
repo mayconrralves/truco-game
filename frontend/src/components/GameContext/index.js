@@ -135,6 +135,7 @@ export default function Game({ children }){
             const draftDeck = data.deck;
             const hand = draftDeck.splice(0,3);
             const state =  {
+               ...data,
                deck: draftDeck,
                uuid:data.uuid,
                hands: {
@@ -152,6 +153,7 @@ export default function Game({ children }){
             const draftDeck = data.deck;
             const hand = draftDeck.splice(0,3);
             const state = {
+               ...data,
                deck: draftDeck,
                uuid: data.uuid,
                hands: {
@@ -175,7 +177,7 @@ export default function Game({ children }){
             setCurrentMove(data.move);
             if(data.first || data.second){
                const { game } = data;
-               const { hands } = game;
+               const { hands,scores } = game;
                setFirstPlayer(data.first);
                setSecondPlayer(data.second);
 
@@ -185,6 +187,11 @@ export default function Game({ children }){
                      ...hands,
                      player1: hands.player2,
                      player2: hands.player1,
+                  },
+                  scores: {
+                     ...scores,
+                     player1: scores.player2,
+                     player2: scores.player1,
                   }
                });
             }

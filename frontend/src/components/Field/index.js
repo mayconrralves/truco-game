@@ -20,6 +20,7 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
             if(firstPlayer){
                 socket.emit('next_move', { 
                     game: {
+                        ...stateGame,
                         uuid,
                         field: c,
                         hands: {
@@ -32,11 +33,12 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
             } else if(secondPlayer){
                 //define who is next
                 let next = false;
-                if(c.rank >= currentCard.rank){
+                if(c.rank > currentCard.rank){
                     next = true;
                 }
                 socket.emit('next_move', {
                     game: {
+                        ...stateGame,
                         uuid,
                         field: c,
                         hands: {
@@ -70,7 +72,7 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
     } 
         return(
             <StyleField>
-                {  currentCard && <Card card={ currentCard} /> }
+                {  currentCard && <Card card={ currentCard } /> }
             </StyleField>
         )
     
