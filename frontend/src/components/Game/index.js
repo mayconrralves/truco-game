@@ -54,30 +54,11 @@ export default function Game(){
         });
         history.goBack();
     }
-    const start = ()=>{
+    const startGame = ()=>{
         setOpenModalPlayer(false);
         const deck = buildDeck();
             socket.emit('shuffled_deck', {
-                    deck,
-                    hands: {
-                        player1: null,
-                        player2: null,
-                    },
-                    scores: {
-                        player1: {
-                            match: 0,
-                            game: 0,
-                            winFirst: false,
-                        },
-                        player2: {
-                            match: 0,
-                            game: 0,
-                            winFirst: false,
-                        },
-                    },
-                    field: null,
-                    uuid,
-                    firstPlayer,
+                    game: stateGame, deck, uuid
             });
     }
     //if a player leaves of game
@@ -122,7 +103,8 @@ export default function Game(){
                     openModalPlayer={openModalPlayer}
                     returnConfigGame={returnConfigGame}
                     goOutGameButton={goOutGameButton}
-                    start={start}
+                    start={startGame}
+                   
                     setGoOutGame={setGoOutGame}
                     firstPlayer={firstPlayer}
                     secondPlayer={secondPlayer}

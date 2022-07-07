@@ -3,24 +3,49 @@ import { connect } from "../../services/socket";
 
 export const GameContext = React.createContext(null);
 
+const INITIAL_STATE_GAME = {
+   deck: null,
+   hands: {
+      player1: null,
+      player2: null,
+   },
+   scores: {
+      player1: {
+            match: 0,
+            game: 0,
+            winFirst: false,
+      },
+      player2: {
+            match: 0,
+            game: 0,
+            winFirst: false,
+      },
+   },
+   field: null,
+   uuid: null,
+}
 export default function Game({ children }){
-   const [socket, setSocket ] = useState(null);
-   const [uuid, setUuid] = useState(null);
-   const [connection, setConnection ] = useState(false);
-   const [games, setGames ] = useState([]);
-   const [playersJoin, setPlayersJoin ] = useState([]);
-   const [startGame, setStartGame ] = useState(false);
-   const [goOutGame, setGoOutGame ] = useState(false);
-   const [otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
-   const [userGoOut, setUserGoOut] = useState(null);
-   const [updateList, setUpdateList] = useState(false);
-   const [myGame, setMyGame] = useState(null);
-   const [coin, setCoin ] = useState(null);
-   const [firstPlayer, setFirstPlayer ] = useState(false);
-   const [secondPlayer, setSecondPlayer ] = useState(false);
+   const [ socket, setSocket ] = useState(null);
+   const [ uuid, setUuid] = useState(null);
+   const [ connection, setConnection ] = useState(false);
+   const [ games, setGames ] = useState([]);
+   const [ playersJoin, setPlayersJoin ] = useState([]);
+   const [ startGame, setStartGame ] = useState(false);
+   const [ goOutGame, setGoOutGame ] = useState(false);
+   const [ otherGoOutPlayer, setOtherGoOutPlayer] = useState(false);
+   const [ userGoOut, setUserGoOut] = useState(null);
+   const [ updateList, setUpdateList] = useState(false);
+   const [ myGame, setMyGame] = useState(null);
+   const [ coin, setCoin ] = useState(null);
+   const [ firstPlayer, setFirstPlayer ] = useState(false);
+   const [ secondPlayer, setSecondPlayer ] = useState(false);
    const [ shuffed, setShuffled ] = useState(false);
    const [stateGame, setStateGame ] = useState(null);
-   const [currentMove, setCurrentMove ] = useState(null);
+   const [ currentMove, setCurrentMove ] = useState(null);
+   const [ winMatch, setWinMatch ] = useState(false);
+   const [ loseMatch, setLoseMatch ] = useState(false);
+   const [ winGame, setWinGame ] = useState(false);
+   const [ loseGame, setLoseGame ] = useState(false);
 
    const startSocket = useCallback(()=>{
       //events
@@ -68,6 +93,9 @@ export default function Game({ children }){
             setUpdateList(false);
             setFirstPlayer(false);
             setSecondPlayer(false);
+            setWinGame(false);
+            setLoseGame(false);
+            setStateGame(INITIAL_STATE_GAME);
          });
          connected.on('opponent_coin', data=>{
             setCoin(data.coin);
@@ -101,6 +129,12 @@ export default function Game({ children }){
             setShuffled(false);
             setStateGame(null);
          });
+         connected.on('win_game',()=>{
+            setWinGame(true);
+         });
+         connected.on('lose_game',()=>{
+            setLoseGame(true);
+         });
          //updated list of rooms when a user closed your session
          connected.on('removed_uuid',()=>{
             setUuid(null);
@@ -126,6 +160,16 @@ export default function Game({ children }){
             setShuffled(false);
             setStateGame(null);
             setCurrentMove(false);
+         });
+         connected.on('start_match', ()=>{
+            setWinMatch(false);
+            setLoseMatch(false);
+         });
+         connected.on('win_match', data=>{
+            setWinMatch(true);
+         });
+         connected.on('lose_match',data=>{
+            setLoseMatch(true);
          });
          connected.on('shuffled_deck', data=>{
             setStateGame(data);
@@ -224,6 +268,10 @@ export default function Game({ children }){
        shuffed,
        stateGame,
        currentMove,
+       winGame,
+       winMatch,
+       loseGame,
+       loseMatch,
        setStartGame,
        setGoOutGame,
        setOtherGoOutPlayer,

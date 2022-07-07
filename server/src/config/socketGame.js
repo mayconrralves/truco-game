@@ -104,9 +104,13 @@ export const initGame=async (socket, io)=>{
             io.to(socket.id).emit('second_player');
         }
     });
+    socket.on('start_match', data=>{
+        const { uuid } = data;
+        io.in(uuid).emit('start_match');
+    });
     socket.on('list_created_games',async ()=>{
         const rooms = listRooms(socket);
-       const games = [];
+        const games = [];
             const uuid = await clientRedis.get(socket.id);
             for(let room of rooms){
                 if(!(uuid === room)){
@@ -122,8 +126,12 @@ export const initGame=async (socket, io)=>{
             });
     });
     socket.on('shuffled_deck', data=>{
-        io.in(data.uuid).emit('shuffled_deck',data);
-        io.to(socket.id).emit('draw_player1', data);
+        const { game, deck, uuid, firstPlayer } = data;
+        game.deck = deck;
+        game.uuid = uuid;
+        //game.firstPlayer = firstPlayer;
+        io.in(uuid).emit('shuffled_deck',game);
+        io.to(socket.id).emit('draw_player1', game);
     });
     socket.on('drew_player1', data=>{
         socket.to(data.uuid).emit('draw_player2', data);
