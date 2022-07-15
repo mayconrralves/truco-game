@@ -8,12 +8,14 @@ export default function ModalGame({
                                         onClickButton, 
                                         buttonDescription, 
                                         labelDescription,
+                                        callback,
                                         component
                                   }){ 
     
     return (
         <ModalGameStyle >
             <div>
+                {callback && callback()}
                 { labelDescription && <label>{labelDescription}</label> }
                 { component }
                 { onChangeInput && <input onChange={ onChangeInput } placeholder={placeholder} /> }

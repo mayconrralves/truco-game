@@ -42,6 +42,7 @@ export default function Game({ children }){
    const [ shuffed, setShuffled ] = useState(false);
    const [stateGame, setStateGame ] = useState(null);
    const [ currentMove, setCurrentMove ] = useState(null);
+   const [ startMatch, setStartMatch ] = useState(false);
    const [ winMatch, setWinMatch ] = useState(false);
    const [ loseMatch, setLoseMatch ] = useState(false);
    const [ winGame, setWinGame ] = useState(false);
@@ -95,6 +96,7 @@ export default function Game({ children }){
             setSecondPlayer(false);
             setWinGame(false);
             setLoseGame(false);
+            setStartMatch(false);
             setStateGame(INITIAL_STATE_GAME);
          });
          connected.on('opponent_coin', data=>{
@@ -164,12 +166,15 @@ export default function Game({ children }){
          connected.on('start_match', ()=>{
             setWinMatch(false);
             setLoseMatch(false);
+            setStartMatch(true);
          });
          connected.on('win_match', data=>{
             setWinMatch(true);
+            setStartMatch(false);
          });
          connected.on('lose_match',data=>{
             setLoseMatch(true);
+            setStartMatch(false);
          });
          connected.on('shuffled_deck', data=>{
             setStateGame(data);
@@ -272,7 +277,9 @@ export default function Game({ children }){
        winMatch,
        loseGame,
        loseMatch,
+       startMatch,
        setStartGame,
+       setStartMatch,
        setGoOutGame,
        setOtherGoOutPlayer,
     };

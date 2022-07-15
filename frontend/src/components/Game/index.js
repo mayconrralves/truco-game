@@ -54,12 +54,16 @@ export default function Game(){
         });
         history.goBack();
     }
+    const startMatch = ()=>{
+        socket.emit('start_match', { uuid });
+    }
     const startGame = ()=>{
         setOpenModalPlayer(false);
         const deck = buildDeck();
             socket.emit('shuffled_deck', {
                     game: stateGame, deck, uuid
             });
+        startMatch();
     }
     //if a player leaves of game
     const returnConfigGame=()=>{
@@ -104,7 +108,6 @@ export default function Game(){
                     returnConfigGame={returnConfigGame}
                     goOutGameButton={goOutGameButton}
                     start={startGame}
-                   
                     setGoOutGame={setGoOutGame}
                     firstPlayer={firstPlayer}
                     secondPlayer={secondPlayer}

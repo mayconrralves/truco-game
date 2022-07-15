@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { GameContext } from "../GameContext";
 import ModalGame from "../ModalGame";
 import SelectCoin from "../SelectCoin";
@@ -13,7 +13,7 @@ export default function ConfigModalGame({
                                             start,
                                             secondPlayer,
                                             setOpenModalPlayer,
-                                            setCoin
+                                            setCoin,
                                         }){
     const {
         goOutGame,
@@ -22,20 +22,34 @@ export default function ConfigModalGame({
         startGame,
         myGame,
         playersJoin,
+        startMatch
     } = useContext(GameContext);
+    const [matchModal, setMatchModal] = useState(true);
+    const openMatchModal = ()=> {
+        if(matchModal && !matchModal) return;
+        setTimeout(()=>{
+            setMatchModal(false);
+        },1000);
+    }
+    useEffect(()=>{
+        if(!startMatch) {
+            setMatchModal(true);
+        }
+    },[startMatch]);
     const cancelledButton = ()=> {
         setGoOutGame(false);
-    }
+        setMatchModal(false);
+    };
     return <>
           {
-                (openModalPlayer && firstPlayer) && <ModalGame 
+                (openModalPlayer && firstPlayer && !startMatch) && <ModalGame 
                 labelDescription='Você irá começar'
                 onClickButton={ start }
                 buttonDescription='Ok'
             />
             }
              {
-                (openModalPlayer && secondPlayer) && <ModalGame
+                (openModalPlayer && secondPlayer && !startMatch) && <ModalGame
                 labelDescription={`${
                                         playersJoin[0].user.toUpperCase()} 
                                         venceu na moeda. Você será o Segundo a jogar`
@@ -45,13 +59,13 @@ export default function ConfigModalGame({
             />
             }
             {
-                (startGame && coin && !myGame) && <ModalGame 
+                (startGame && coin && !myGame && !goOutGame) && <ModalGame 
                     labelDescription={`Seu lado da moeda é ${coin}`}
                     onClickButton={()=> setCoin(null) }
                     buttonDescription='Ok'
                 />
             }
-             {(startGame && myGame && !coin) && <ModalGame 
+             {(startGame && myGame && !coin && !startMatch) && <ModalGame 
                                                 labelDescription={'Escolhar par ou Impar'}
                                                 component={<SelectCoin  onSelectCoin={selectCoin}/>}
                                             />
@@ -67,6 +81,11 @@ export default function ConfigModalGame({
                                 buttonDescription='Sair'
                                 onClickButton={goOutGameButton}
                                 onClickCancelled={cancelledButton}
+                          />
+            }
+            {(startMatch && matchModal && !goOutGame) && <ModalGame
+                                labelDescription='Iniciando Match'
+                                callback={openMatchModal}
                           />
             }
     
