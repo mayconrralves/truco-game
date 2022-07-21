@@ -170,11 +170,14 @@ export default function Game({ children }){
          });
          connected.on('win_match', data=>{
             setWinMatch(true);
-            setStartMatch(false);
+            setLoseMatch(false);
+            console.log('win')
          });
          connected.on('lose_match',data=>{
             setLoseMatch(true);
-            setStartMatch(false);
+            setWinMatch(false);
+           
+            console.log('lose');
          });
          connected.on('shuffled_deck', data=>{
             setStateGame(data);

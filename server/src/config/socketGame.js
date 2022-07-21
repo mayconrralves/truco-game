@@ -142,7 +142,26 @@ export const initGame=async (socket, io)=>{
     });
     socket.on('next_move', data=> {
         const { game } = data;
+        const {player1, player2 } = game.scores;
         io.in(game.uuid).emit('update_state_game',game);
+
+        if(     
+            player1.match === 2 || 
+            (player1.match === 1 && player2.match === 1 && player1.winFirst === true)
+         ){
+            io.to(socket.id).emit('lose_match');
+            socket.to(game.uuid).emit('win_match');
+            return; 
+        }
+        if( 
+            player2.match === 2 ||
+            (player1.match === 1 && player2.match === 1 && player2.winFirst === true)
+        ){
+            io.to(socket.id).emit('win_match');
+            socket.to(game.uuid).emit('lose_match');
+            return;
+        }
+        
         if(data.next){
             io.to(socket.id).emit('update_move', {move: true, first: true, second: false, game });
             socket.to(game.uuid).emit('update_move', {move: false, first: false, second: true, game });
