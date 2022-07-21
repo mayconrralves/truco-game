@@ -24,22 +24,33 @@ export default function ConfigModalGame({
         playersJoin,
         startMatch
     } = useContext(GameContext);
-    const [matchModal, setMatchModal] = useState(true);
+    const [ matchModal, setMatchModal ] = useState(true);
+    const [ openWarning, setOpenWarning ] = useState(true);
     const openMatchModal = ()=> {
         if(matchModal && !matchModal) return;
         setTimeout(()=>{
             setMatchModal(false);
         },1000);
     }
+    
     useEffect(()=>{
         if(!startMatch) {
             setMatchModal(true);
         }
     },[startMatch]);
+    useEffect(()=>{
+        if(coin){
+             setOpenWarning(false);
+        }
+    },[coin]);
+    
     const cancelledButton = ()=> {
         setGoOutGame(false);
         setMatchModal(false);
     };
+    const closeWarning = () =>{
+        setOpenWarning(false);
+    }
     return <>
           {
                 (openModalPlayer && firstPlayer && !startMatch) && <ModalGame 
@@ -68,6 +79,13 @@ export default function ConfigModalGame({
              {(startGame && myGame && !coin && !startMatch) && <ModalGame 
                                                 labelDescription={'Escolhar par ou Impar'}
                                                 component={<SelectCoin  onSelectCoin={selectCoin}/>}
+                                            />
+            }
+             {(startGame && !myGame && openWarning && !coin && !startMatch) && <ModalGame 
+                                                labelDescription={'Seu oponente está escolhendo a moeda'}
+                                                onClickButton={closeWarning}
+                                                buttonDescription='Ok'
+                                                
                                             />
             }
             {otherGoOutPlayer && <ModalGame  
