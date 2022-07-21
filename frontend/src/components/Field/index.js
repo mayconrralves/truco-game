@@ -36,6 +36,7 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
                     next: false,
                 });
             } else if(secondPlayer){
+                const { player1, player2 } = stateGame.scores;
                 //define who is next
                 let next = false;
                 if(c.rank > currentCard.rank){
@@ -52,7 +53,6 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
                     stateGame.scores.player1.match++;
                 } 
                 else {
-                    const { player1, player2 } = stateGame.scores;
                     if( player1.winFirst ){
                         player1.match++;
                     }else if( player2.winFirst ){
@@ -67,7 +67,12 @@ export default function Field ({ socket, firstPlayer, secondPlayer, stateGame, c
                         hands: {
                             ...hands,
                             player2: updateHand(hands.player2, c),
-                        } 
+                        },
+                        scores: {
+                            ...stateGame.scores,
+                            player1,
+                            player2
+                        }
                     },
                     next,
                });
