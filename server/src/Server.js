@@ -5,9 +5,8 @@ import cors from 'cors';
 import routes from './routes';
 import { initGame } from './config/socketGame';
 
-
 class ServerApp {
-    constructor(){
+    constructor() {
         this.server = express();
         this.middlewares();
         this.routes();
@@ -15,16 +14,16 @@ class ServerApp {
         this.io = new Server(this.httpServer);
         this.configurationWebSocket();
     }
-    routes(){
+    routes() {
         this.server.use(routes);
     }
-    middlewares(){
+    middlewares() {
         this.server.use(express.urlencoded({ extended: false }));
         this.server.use(express.json());
         this.server.use(cors());
     }
-    configurationWebSocket(){
-        this.io.on('connection',(socket)=>{
+    configurationWebSocket() {
+        this.io.on('connection', (socket) => {
             initGame(socket, this.io);
         });
     }
