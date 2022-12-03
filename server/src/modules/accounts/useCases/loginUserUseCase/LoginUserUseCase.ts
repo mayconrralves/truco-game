@@ -1,10 +1,16 @@
 import { sign } from 'jsonwebtoken';
 import { inject, injectable } from 'tsyringe';
+import { User } from '../../infra/sequelize/entities/User';
 import { IUserRepository } from '../../infra/sequelize/repositories/interfaces/IUserRepository';
 
-interface IRequest {
+export interface IRequest {
     email: string;
     password: string;
+}
+
+export interface IResponse {
+    user?: User;
+    token?: string;
 }
 
 @injectable()
@@ -13,7 +19,7 @@ export class LoginUserUseCase {
         @inject('UsersRepository')
         private userRepository: IUserRepository
     ) {}
-    async execute({ email, password }: IRequest): Promise<string> {
+    async execute({ email, password }: IRequest): Promise<IResponse> {
         const user = await this.userRepository.findUserByEmail(email);
         if (!user) {
             throw Error('Email or Password is incorrect');
@@ -21,12 +27,15 @@ export class LoginUserUseCase {
         if (user.password !== password) {
             // throw Error('Email or Password is incorrect');
             console.log('Error');
-            return '';
+            return {};
         }
         const token = sign({}, process.env.SECRET_JWT!, {
             subject: user.id.toString(),
             expiresIn: '15d',
         });
-        return token;
+        return {
+            user,
+            token,
+        };
     }
 }
