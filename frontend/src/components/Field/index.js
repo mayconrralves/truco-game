@@ -57,7 +57,7 @@ export default function Field({
               player2: { winFirst: true, match: 1 },
             };
           } else {
-            game.scores.match++;
+            game.scores.player2.match++;
           }
           winner = "SECOND";
         } else if (c.rank < currentCard.rank) {
@@ -67,7 +67,7 @@ export default function Field({
               player1: { winFirst: true, match: 1 },
             };
           } else {
-            game.scores.match++;
+            game.scores.player1.match++;
           }
         } else {
           winner = "SECOND";
