@@ -18,13 +18,63 @@ export default function Field({
       setCurrentCard(stateGame.field);
     }
   }, [stateGame]);
-  const winFirst = (player1, opponent) => {
-    if (player1.match === 0 && opponent.match === 0) {
-      return true;
+
+  const verifyWinner = (game) => {
+    if (game.matches >= 2) {
+      if (game.scores.player1.match > game.scores.player2.match) {
+        socket.emit("win_match", { game, winPlayer: "FIRST" });
+      } else if (game.scores.player2.match > game.scores.player1.match) {
+        socket.emit("win_match", { game, winPlayer: "SECOND" });
+      }
+    } else if (game.matches > 3) {
+      if (game.scores.player1.match === game.scores.player2.match) {
+        if (game.scores.player1.winFirst) {
+          socket.emit("win_match", { game, winPlayer: "FIRST" });
+        } else if (game.scores.player2.winFirst) {
+          socket.emit("win_match", {
+            game,
+            winPlayer: "SECOND",
+          });
+        }
+      }
     }
-    return false;
   };
 
+  const updateScores = (player, uuid, c, hands) => {
+    const game = {
+      ...stateGame,
+      uuid,
+      field: c,
+      hands: {
+        player1: firstPlayer ? player : hands.player1,
+        player2: secondPlayer ? player : hands.player2,
+      },
+    };
+    if (phase === "FIRST") {
+      socket.emit("next_move_first_phase", { game });
+    } else if (phase === "SECOND") {
+      let winner = "FIRST";
+      if (c.rank > currentCard.rank) {
+        winner = "SECOND";
+        if (secondPlayer) {
+          game.scores.player2.match++;
+        } else {
+          game.scores.player1.match++;
+        }
+      } else if (c.rank < currentCard.rank) {
+        winner = "FIRST";
+        if (secondPlayer) {
+          game.scores.player1.match++;
+        } else {
+          game.scores.player2.match++;
+        }
+      }
+
+      game.matches++;
+      socket.emit("next_move_second_phase", { game, winner });
+      verifyWinner(game);
+    }
+  };
   const handleDrop = (event) => {
     const data = event.dataTransfer.getData("text/plain");
     let player = null;
@@ -37,43 +87,7 @@ export default function Field({
       } else if (secondPlayer) {
         player = updateHand(hands.player2, c);
       }
-      const game = {
-        ...stateGame,
-        uuid,
-        field: c,
-        hands: {
-          player1: firstPlayer ? player : hands.player1,
-          player2: secondPlayer ? player : hands.player2,
-        },
-      };
-      if (phase === "FIRST") {
-        socket.emit("next_move_first", { game });
-      } else if (phase === "SECOND") {
-        let winner = "FIRST";
-        if (c.rank > currentCard.rank) {
-          if (winFirst(game.scores.player1, game.scores.player2)) {
-            game.scores = {
-              ...game.scores,
-              player2: { winFirst: true, match: 1 },
-            };
-          } else {
-            game.scores.player2.match++;
-          }
-          winner = "SECOND";
-        } else if (c.rank < currentCard.rank) {
-          if (winFirst(game.scores.player1, game.scores.player2)) {
-            game.scores = {
-              ...game.scores,
-              player1: { winFirst: true, match: 1 },
-            };
-          } else {
-            game.scores.player1.match++;
-          }
-        } else {
-          winner = "SECOND";
-        }
-        socket.emit("next_move_second", { game, winner });
-      }
+      updateScores(player, uuid, c, hands);
     } catch (e) {
       console.error(e);
     }

@@ -10,12 +10,16 @@ const INITIAL_STATE_GAME = {
     player1: null,
     player2: null,
   },
+  matches: 0,
+  truco: 1,
   scores: {
     player1: {
+      points: 0,
       match: 0,
       winFirst: false,
     },
     player2: {
+      points: 0,
       match: 0,
       winFirst: false,
     },
@@ -169,14 +173,7 @@ export default function Game({ children }) {
         setLoseMatch(false);
         setStartMatch(true);
       });
-      connected.on("win_match", (data) => {
-        setWinMatch(true);
-        setLoseMatch(false);
-      });
-      connected.on("lose_match", (data) => {
-        setLoseMatch(true);
-        setWinMatch(false);
-      });
+
       connected.on("shuffled_deck", (data) => {
         setStateGame(data);
         setShuffled(true);
@@ -235,7 +232,38 @@ export default function Game({ children }) {
       connected.on("update_move", (data) => {
         setStateGame(data.game);
       });
-
+      connected.on("win_match", (data) => {
+        const { winPlayer, game } = data;
+        const { player1, player2 } = game.scores;
+        if (winPlayer === "FIRST") {
+          player1.match = 0;
+          player1.winFirst = false;
+          player1.points = player1.points + 2 * game.truco;
+          player2.match = 0;
+          player2.winFirst = false;
+        } else if (winPlayer === "SECOND") {
+          player1.match = 0;
+          player1.winFirst = false;
+          player2.match = 0;
+          player2.winFirst = false;
+          player2.points = player2.points + 2 * game.truco;
+        }
+        setStateGame({
+          ...game,
+          scores: {
+            ...game.scores,
+            player1,
+            player2,
+          },
+        });
+        setWinMatch(true);
+        connected.emit("lose_match", { game });
+      });
+      connected.on("lose_match", (data) => {
+        const { game } = data;
+        setLoseMatch(true);
+        setStateGame(game);
+      });
       connected.on("error", (data) => {
         console.log("error", data.msg, data.event);
       });

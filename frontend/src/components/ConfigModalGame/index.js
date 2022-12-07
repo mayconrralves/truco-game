@@ -23,6 +23,8 @@ export default function ConfigModalGame({
     myGame,
     playersJoin,
     startMatch,
+    winMatch,
+    loseMatch,
   } = useContext(GameContext);
   const [matchModal, setMatchModal] = useState(true);
   const [openWarning, setOpenWarning] = useState(true);
@@ -109,6 +111,9 @@ export default function ConfigModalGame({
           callback={openMatchModal}
         />
       )}
+
+      {winMatch && <ModalGame labelDescription={"Você ganhou o Match"} />}
+      {loseMatch && <ModalGame labelDescription={"Você Perdeu o Match"} />}
     </>
   );
 }
