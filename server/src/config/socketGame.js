@@ -134,10 +134,9 @@ export const initGame = async (socket, io) => {
         });
     });
     socket.on('shuffled_deck', (data) => {
-        const { game, deck, uuid, firstPlayer } = data;
+        const { game, deck, uuid } = data;
         game.deck = deck;
         game.uuid = uuid;
-        //game.firstPlayer = firstPlayer;
         io.in(uuid).emit('shuffled_deck', game);
         io.to(socket.id).emit('draw_player1', game);
     });
@@ -148,7 +147,16 @@ export const initGame = async (socket, io) => {
         socket.to(data.uuid).emit('end_draw', data);
         socket.to(data.uuid).emit('first_move', data);
     });
-    socket.on('next_move_second', (data) => {
+    socket.on('next_move_first_phase', (data) => {
+        const { game } = data;
+
+        io.in(game.uuid).emit('update_move', { game });
+        socket.to(game.uuid).emit('active_player');
+        io.to(socket.id).emit('inactive_player');
+        io.in(game.uuid).emit('second_phase');
+        io.in(game.uuid).emit('end_first_phase');
+    });
+    socket.on('next_move_second_phase', (data) => {
         const { game, winner } = data;
         io.in(game.uuid).emit('update_move', { game });
         if (winner === 'FIRST') {
@@ -161,16 +169,23 @@ export const initGame = async (socket, io) => {
         }
         io.in(game.uuid).emit('first_phase');
     });
-    socket.on('next_move_first', (data) => {
+    socket.on('win_match', (data) => {
+        const { game, winPlayer } = data;
+        if (winPlayer === 'FIRST') {
+            socket.to(game.uuid).emit('win_match', { winPlayer, game });
+        } else if (winPlayer === 'SECOND') {
+            io.to(socket.id).emit('win_match', { winPlayer, game });
+        }
+    });
+    socket.on('lose_match', (data) => {
         const { game } = data;
-
-        io.in(game.uuid).emit('update_move', { game });
-        socket.to(game.uuid).emit('active_player');
-        io.to(socket.id).emit('inactive_player');
-        io.in(game.uuid).emit('second_phase');
+        socket.to(game.uuid).emit('lose_match', { game });
+    });
+    socket.on('tie_match', (data) => {
+        const { game } = data;
+        io.in(game.uuid).emit('tie_match');
     });
     socket.on('go_out_player', async ({ uuid, user }) => {
-        const data = await clientRedis.get(uuid);
         socket.to(uuid).emit('go_out_player', {
             uuid,
             user,
