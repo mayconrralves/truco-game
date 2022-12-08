@@ -19,9 +19,7 @@ export default function Field({
       setCurrentCard(stateGame.field);
     }
   }, [stateGame]);
-  const checkFirst = (scores) => {
-    return !(scores.player1.match || scores.player2.match);
-  };
+
   const checkWinner = (game) => {
     if (game.matches >= 2) {
       if (game.scores.player1.match > game.scores.player2.match) {
@@ -55,18 +53,18 @@ export default function Field({
       if (c.rank > currentCard.rank) {
         winner = "SECOND";
         if (secondPlayer) {
-          game.scores.player2.winFirst = checkFirst(game.scores) ? true : false;
+          game.scores.player2.winFirst = game.matches === 0 ? true : false;
           game.scores.player2.match++;
         } else {
-          game.scores.player1.winFirst = checkFirst(game.scores) ? true : false;
+          game.scores.player1.winFirst = game.matches === 0 ? true : false;
           game.scores.player1.match++;
         }
       } else if (c.rank < currentCard.rank) {
         if (secondPlayer) {
-          game.scores.player1.winFirst = checkFirst(game.scores) ? true : false;
+          game.scores.player1.winFirst = game.matches === 0 ? true : false;
           game.scores.player1.match++;
         } else {
-          game.scores.player2.winFirst = checkFirst(game.scores) ? true : false;
+          game.scores.player2.winFirst = game.matches === 0 ? true : false;
           game.scores.player2.match++;
         }
       }
