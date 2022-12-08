@@ -23,6 +23,14 @@ export default function Field({
       setCurrentCard(stateGame.field);
     }
   }, [stateGame]);
+  const checkTie = (game) => {
+    if (
+      game.matches === 3 &&
+      game.scores.player1.match === game.scores.player2.match
+    ) {
+      sendTieMatch({ game, firstPlayer, secondPlayer });
+    }
+  };
 
   const checkWinner = (game) => {
     if (game.matches >= 2) {
@@ -30,24 +38,27 @@ export default function Field({
         sendWinMatch({ game, winPlayer: "FIRST" });
       } else if (game.scores.player2.match > game.scores.player1.match) {
         sendWinMatch({ game, winPlayer: "SECOND" });
-      } else if (
-        game.matches === 3 &&
-        game.scores.player1.match === game.scores.player2.match
-      ) {
-        sendTieMatch({ game, firstPlayer, secondPlayer });
+      } else {
+        checkTie(game);
       }
     }
   };
-  const updateScores = (player, uuid, c, hands) => {
+
+  const invertPlayerHands = ({ player, c, hands }) => {
     const game = {
       ...stateGame,
-      uuid,
       field: c,
       hands: {
         player1: firstPlayer ? player : hands.player1,
         player2: secondPlayer ? player : hands.player2,
       },
     };
+    return game;
+  };
+
+  const updateScores = (player, c, hands) => {
+    const game = invertPlayerHands({ player, c, hands });
+
     if (phase === "FIRST") {
       sendNextMoveFirstPhase({ game });
     } else if (phase === "SECOND") {
@@ -75,10 +86,11 @@ export default function Field({
       checkWinner(game);
     }
   };
+
   const handleDrop = (event) => {
     const data = event.dataTransfer.getData("text/plain");
     let player = null;
-    const { hands, uuid } = stateGame;
+    const { hands } = stateGame;
     try {
       const c = JSON.parse(data);
       setCurrentCard(c);
@@ -87,7 +99,7 @@ export default function Field({
       } else if (secondPlayer) {
         player = updateHand(hands.player2, c);
       }
-      updateScores(player, uuid, c, hands);
+      updateScores(player, c, hands);
     } catch (e) {
       console.error(e);
     }
