@@ -8,6 +8,7 @@ import Field from "../Field";
 import { buildDeck } from "../../utils";
 import { StyleGame } from "./styles";
 import ConfigModalGame from "../ConfigModalGame";
+import { SendMessagetoServerContext } from "../SendMessagetoServerContext";
 
 export default function Game() {
   const {
@@ -23,8 +24,16 @@ export default function Game() {
     phase,
   } = useContext(GameContext);
 
+  const {
+    sendWinMatch,
+    sendTieMatch,
+    sendNextMoveFirstPhase,
+    sendNextMoveSecondPhase,
+  } = useContext(SendMessagetoServerContext);
+
   const { user } = useContext(AuthContext);
   const [coin, setCoin] = useState(null);
+  const [currentCard, setCurrentCard] = useState(null);
   const [openModalPlayer, setOpenModalPlayer] = useState(true);
   const history = useHistory();
   useEffect(() => {
@@ -102,6 +111,69 @@ export default function Game() {
     );
     return hand;
   };
+  const checkTie = (game) => {
+    if (
+      game.matches === 3 &&
+      game.scores.player1.match === game.scores.player2.match
+    ) {
+      sendTieMatch({ game, firstPlayer, secondPlayer });
+    }
+  };
+
+  const checkWinner = (game) => {
+    if (game.matches >= 2) {
+      if (game.scores.player1.match > game.scores.player2.match) {
+        sendWinMatch({ game, winPlayer: "FIRST" });
+      } else if (game.scores.player2.match > game.scores.player1.match) {
+        sendWinMatch({ game, winPlayer: "SECOND" });
+      } else {
+        checkTie(game);
+      }
+    }
+  };
+
+  const invertPlayerHands = ({ player, c, hands }) => {
+    const game = {
+      ...stateGame,
+      field: c,
+      hands: {
+        player1: firstPlayer ? player : hands.player1,
+        player2: secondPlayer ? player : hands.player2,
+      },
+    };
+    return game;
+  };
+
+  const updateScores = (player, c, hands) => {
+    const game = invertPlayerHands({ player, c, hands });
+
+    if (phase === "FIRST") {
+      sendNextMoveFirstPhase({ game });
+    } else if (phase === "SECOND") {
+      let winner = "FIRST";
+      if (c.rank > currentCard.rank) {
+        winner = "SECOND";
+        if (secondPlayer) {
+          game.scores.player2.winFirst = game.matches === 0 ? true : false;
+          game.scores.player2.match++;
+        } else {
+          game.scores.player1.winFirst = game.matches === 0 ? true : false;
+          game.scores.player1.match++;
+        }
+      } else if (c.rank < currentCard.rank) {
+        if (secondPlayer) {
+          game.scores.player1.winFirst = game.matches === 0 ? true : false;
+          game.scores.player1.match++;
+        } else {
+          game.scores.player2.winFirst = game.matches === 0 ? true : false;
+          game.scores.player2.match++;
+        }
+      }
+      game.matches++;
+      sendNextMoveSecondPhase({ game, winner });
+      checkWinner(game);
+    }
+  };
 
   return (
     <StyleGame>
@@ -132,7 +204,9 @@ export default function Game() {
             currentMove={currentMove}
             stateGame={stateGame}
             updateHand={updateHand}
-            phase={phase}
+            currentCard={currentCard}
+            setCurrentCard={setCurrentCard}
+            updateScores={updateScores}
           />
           <Hand cards={handPlayer()} currentMove={currentMove} />
         </>

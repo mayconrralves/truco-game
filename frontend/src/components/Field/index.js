@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import Card from "../Card";
-import { SendMessagetoServerContext } from "../SendMessagetoServerContext";
 import { StyleField } from "./styles";
 
 export default function Field({
@@ -9,83 +8,15 @@ export default function Field({
   stateGame,
   currentMove,
   updateHand,
-  phase,
+  currentCard,
+  setCurrentCard,
+  updateScores,
 }) {
-  const [currentCard, setCurrentCard] = useState(null);
-  const {
-    sendWinMatch,
-    sendTieMatch,
-    sendNextMoveFirstPhase,
-    sendNextMoveSecondPhase,
-  } = useContext(SendMessagetoServerContext);
   useEffect(() => {
     if (stateGame?.field) {
       setCurrentCard(stateGame.field);
     }
-  }, [stateGame]);
-  const checkTie = (game) => {
-    if (
-      game.matches === 3 &&
-      game.scores.player1.match === game.scores.player2.match
-    ) {
-      sendTieMatch({ game, firstPlayer, secondPlayer });
-    }
-  };
-
-  const checkWinner = (game) => {
-    if (game.matches >= 2) {
-      if (game.scores.player1.match > game.scores.player2.match) {
-        sendWinMatch({ game, winPlayer: "FIRST" });
-      } else if (game.scores.player2.match > game.scores.player1.match) {
-        sendWinMatch({ game, winPlayer: "SECOND" });
-      } else {
-        checkTie(game);
-      }
-    }
-  };
-
-  const invertPlayerHands = ({ player, c, hands }) => {
-    const game = {
-      ...stateGame,
-      field: c,
-      hands: {
-        player1: firstPlayer ? player : hands.player1,
-        player2: secondPlayer ? player : hands.player2,
-      },
-    };
-    return game;
-  };
-
-  const updateScores = (player, c, hands) => {
-    const game = invertPlayerHands({ player, c, hands });
-
-    if (phase === "FIRST") {
-      sendNextMoveFirstPhase({ game });
-    } else if (phase === "SECOND") {
-      let winner = "FIRST";
-      if (c.rank > currentCard.rank) {
-        winner = "SECOND";
-        if (secondPlayer) {
-          game.scores.player2.winFirst = game.matches === 0 ? true : false;
-          game.scores.player2.match++;
-        } else {
-          game.scores.player1.winFirst = game.matches === 0 ? true : false;
-          game.scores.player1.match++;
-        }
-      } else if (c.rank < currentCard.rank) {
-        if (secondPlayer) {
-          game.scores.player1.winFirst = game.matches === 0 ? true : false;
-          game.scores.player1.match++;
-        } else {
-          game.scores.player2.winFirst = game.matches === 0 ? true : false;
-          game.scores.player2.match++;
-        }
-      }
-      game.matches++;
-      sendNextMoveSecondPhase({ game, winner });
-      checkWinner(game);
-    }
-  };
+  }, [stateGame, setCurrentCard]);
 
   const handleDrop = (event) => {
     const data = event.dataTransfer.getData("text/plain");
