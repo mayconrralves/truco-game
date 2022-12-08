@@ -18,28 +18,23 @@ export default function Field({
       setCurrentCard(stateGame.field);
     }
   }, [stateGame]);
-
-  const verifyWinner = (game) => {
+  const checkFirst = (scores) => {
+    return !(scores.player1.match || scores.player2.match);
+  };
+  const checkWinner = (game) => {
     if (game.matches >= 2) {
       if (game.scores.player1.match > game.scores.player2.match) {
         socket.emit("win_match", { game, winPlayer: "FIRST" });
       } else if (game.scores.player2.match > game.scores.player1.match) {
         socket.emit("win_match", { game, winPlayer: "SECOND" });
-      }
-    } else if (game.matches > 3) {
-      if (game.scores.player1.match === game.scores.player2.match) {
-        if (game.scores.player1.winFirst) {
-          socket.emit("win_match", { game, winPlayer: "FIRST" });
-        } else if (game.scores.player2.winFirst) {
-          socket.emit("win_match", {
-            game,
-            winPlayer: "SECOND",
-          });
-        }
+      } else if (
+        game.matches === 3 &&
+        game.scores.player1.match === game.scores.player2.match
+      ) {
+        socket.emit("tie_match", { game, firstPlayer, secondPlayer });
       }
     }
   };
-
   const updateScores = (player, uuid, c, hands) => {
     const game = {
       ...stateGame,
@@ -57,22 +52,24 @@ export default function Field({
       if (c.rank > currentCard.rank) {
         winner = "SECOND";
         if (secondPlayer) {
+          game.scores.player2.winFirst = checkFirst(game.scores) ? true : false;
           game.scores.player2.match++;
         } else {
+          game.scores.player1.winFirst = checkFirst(game.scores) ? true : false;
           game.scores.player1.match++;
         }
       } else if (c.rank < currentCard.rank) {
-        winner = "FIRST";
         if (secondPlayer) {
+          game.scores.player1.winFirst = checkFirst(game.scores) ? true : false;
           game.scores.player1.match++;
         } else {
+          game.scores.player2.winFirst = checkFirst(game.scores) ? true : false;
           game.scores.player2.match++;
         }
       }
-
       game.matches++;
       socket.emit("next_move_second_phase", { game, winner });
-      verifyWinner(game);
+      checkWinner(game);
     }
   };
   const handleDrop = (event) => {

@@ -40,10 +40,6 @@ export const initGame = async (socket, io) => {
 
     socket.on('join_game', async ({ uuid, user, userId }) => {
         const numbersUsers = socket.adapter.rooms.get(uuid)?.size ?? 0;
-        // console.log(
-        //     io.sockets.adapter.rooms.get(uuid),
-        //     socket.adapter.rooms.get(uuid)
-        // );
         if (numbersUsers === 0) {
             socket.emit('room_no_created');
         } else if (numbersUsers < NUM_PLAYERS) {
@@ -95,8 +91,6 @@ export const initGame = async (socket, io) => {
                 event: 'choose_coin',
             });
         }
-
-        return;
     });
     socket.on('what_winner_coin', ({ coin, uuid }) => {
         const coins = {
@@ -177,14 +171,38 @@ export const initGame = async (socket, io) => {
             io.to(socket.id).emit('win_match', { winPlayer, game });
         }
     });
+    socket.on('tie_match', (data) => {
+        const { game } = data;
+        const { player1, player2, firstPlayer, secondPlayer } = game.scores;
+        if (player1.winFirst) {
+            if (firstPlayer) {
+                io.to(socket.id).emit('win_match', {
+                    winPlayer: 'FIRST',
+                    game,
+                });
+            } else {
+                socket
+                    .to(game.uuid)
+                    .emit('win_match', { winPlayer: 'FIRST', game });
+            }
+        } else if (player2.winFirst) {
+            if (secondPlayer) {
+                socket
+                    .to(game.uuid)
+                    .emit('win_match', { winPlayer: 'FIRST', game });
+            } else {
+                io.to(socket.id).emit('win_match', {
+                    winPlayer: 'SECOND',
+                    game,
+                });
+            }
+        }
+    });
     socket.on('lose_match', (data) => {
         const { game } = data;
         socket.to(game.uuid).emit('lose_match', { game });
     });
-    socket.on('tie_match', (data) => {
-        const { game } = data;
-        io.in(game.uuid).emit('tie_match');
-    });
+
     socket.on('go_out_player', async ({ uuid, user }) => {
         socket.to(uuid).emit('go_out_player', {
             uuid,
