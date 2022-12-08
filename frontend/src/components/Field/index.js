@@ -4,7 +4,6 @@ import { SendMessagetoServerContext } from "../SendMessagetoServerContext";
 import { StyleField } from "./styles";
 
 export default function Field({
-  socket,
   firstPlayer,
   secondPlayer,
   stateGame,
@@ -13,7 +12,12 @@ export default function Field({
   phase,
 }) {
   const [currentCard, setCurrentCard] = useState(null);
-  const { winMatch } = useContext(SendMessagetoServerContext);
+  const {
+    sendWinMatch,
+    sendTieMatch,
+    sendNextMoveFirstPhase,
+    sendNextMoveSecondPhase,
+  } = useContext(SendMessagetoServerContext);
   useEffect(() => {
     if (stateGame?.field) {
       setCurrentCard(stateGame.field);
@@ -23,16 +27,14 @@ export default function Field({
   const checkWinner = (game) => {
     if (game.matches >= 2) {
       if (game.scores.player1.match > game.scores.player2.match) {
-        winMatch && winMatch({ game, winPlayer: "FIRST" });
-        //socket.emit("win_match", { game, winPlayer: "FIRST" });
+        sendWinMatch({ game, winPlayer: "FIRST" });
       } else if (game.scores.player2.match > game.scores.player1.match) {
-        winMatch && winMatch({ game, winPlayer: "SECOND" });
-        //socket.emit("win_match", { game, winPlayer: "SECOND" });
+        sendWinMatch({ game, winPlayer: "SECOND" });
       } else if (
         game.matches === 3 &&
         game.scores.player1.match === game.scores.player2.match
       ) {
-        socket.emit("tie_match", { game, firstPlayer, secondPlayer });
+        sendTieMatch({ game, firstPlayer, secondPlayer });
       }
     }
   };
@@ -47,7 +49,7 @@ export default function Field({
       },
     };
     if (phase === "FIRST") {
-      socket.emit("next_move_first_phase", { game });
+      sendNextMoveFirstPhase({ game });
     } else if (phase === "SECOND") {
       let winner = "FIRST";
       if (c.rank > currentCard.rank) {
@@ -69,7 +71,7 @@ export default function Field({
         }
       }
       game.matches++;
-      socket.emit("next_move_second_phase", { game, winner });
+      sendNextMoveSecondPhase({ game, winner });
       checkWinner(game);
     }
   };
