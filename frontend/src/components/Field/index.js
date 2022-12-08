@@ -10,7 +10,7 @@ export default function Field({
   updateHand,
   currentCard,
   setCurrentCard,
-  updateScores,
+  changePhase,
 }) {
   useEffect(() => {
     if (stateGame?.field) {
@@ -23,14 +23,14 @@ export default function Field({
     let player = null;
     const { hands } = stateGame;
     try {
-      const c = JSON.parse(data);
-      setCurrentCard(c);
+      const card = JSON.parse(data);
+      setCurrentCard(card);
       if (firstPlayer) {
-        player = updateHand(hands.player1, c);
+        player = updateHand(hands.player1, card);
       } else if (secondPlayer) {
-        player = updateHand(hands.player2, c);
+        player = updateHand(hands.player2, card);
       }
-      updateScores(player, c, hands);
+      changePhase(player, card, hands);
     } catch (e) {
       console.error(e);
     }

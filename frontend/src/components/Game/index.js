@@ -28,7 +28,12 @@ export default function Game() {
     sendWinMatch,
     sendTieMatch,
     sendNextMoveFirstPhase,
+    sendWhatWinnerCoin,
+    sendGoOutPlayer,
     sendNextMoveSecondPhase,
+    sendStartMatch,
+    sendShuffledDeck,
+    sendChooseCoin,
   } = useContext(SendMessagetoServerContext);
 
   const { user } = useContext(AuthContext);
@@ -39,12 +44,12 @@ export default function Game() {
   useEffect(() => {
     if (coinOpponent) {
       setCoin(coinOpponent);
-      socket.emit("what_winner_coin", {
+      sendWhatWinnerCoin({
         coin: coinOpponent,
         uuid,
       });
     }
-  }, [coinOpponent, uuid, socket]);
+  }, [coinOpponent, uuid, socket, sendWhatWinnerCoin]);
 
   useEffect(() => {
     const listen = (location, action) => {
@@ -58,24 +63,15 @@ export default function Game() {
 
   const goOutGameButton = () => {
     setStartGame(false);
-    socket.emit("go_out_player", {
-      uuid,
-      user: user.name,
-    });
+    sendGoOutPlayer({ uuid, user: user.name });
     history.goBack();
   };
-  const startMatch = () => {
-    socket.emit("start_match", { uuid });
-  };
+
   const startGame = () => {
     setOpenModalPlayer(false);
     const deck = buildDeck();
-    socket.emit("shuffled_deck", {
-      game: stateGame,
-      deck,
-      uuid,
-    });
-    startMatch();
+    sendShuffledDeck({ game: stateGame, deck, uuid });
+    sendStartMatch({ uuid });
   };
   //if a player leaves of game
   const returnConfigGame = () => {
@@ -83,10 +79,7 @@ export default function Game() {
   };
   const selectCoin = (coin) => {
     setCoin(coin);
-    socket.emit("choose_coin", {
-      coin,
-      uuid,
-    });
+    sendChooseCoin({ coin, uuid });
   };
   const handPlayer = () => {
     if (firstPlayer) {
@@ -132,10 +125,10 @@ export default function Game() {
     }
   };
 
-  const invertPlayerHands = ({ player, c, hands }) => {
+  const invertPlayerHands = ({ player, card, hands }) => {
     const game = {
       ...stateGame,
-      field: c,
+      field: card,
       hands: {
         player1: firstPlayer ? player : hands.player1,
         player2: secondPlayer ? player : hands.player2,
@@ -143,35 +136,37 @@ export default function Game() {
     };
     return game;
   };
-
-  const updateScores = (player, c, hands) => {
-    const game = invertPlayerHands({ player, c, hands });
+  const updateScores = ({ card, winner, game }) => {
+    if (card.rank > currentCard.rank) {
+      winner = "SECOND";
+      if (secondPlayer) {
+        game.scores.player2.winFirst = game.matches === 0 ? true : false;
+        game.scores.player2.match++;
+      } else {
+        game.scores.player1.winFirst = game.matches === 0 ? true : false;
+        game.scores.player1.match++;
+      }
+    } else if (card.rank < currentCard.rank) {
+      if (secondPlayer) {
+        game.scores.player1.winFirst = game.matches === 0 ? true : false;
+        game.scores.player1.match++;
+      } else {
+        game.scores.player2.winFirst = game.matches === 0 ? true : false;
+        game.scores.player2.match++;
+      }
+    }
+    game.matches++;
+    sendNextMoveSecondPhase({ game, winner });
+    checkWinner(game);
+  };
+  const changePhase = (player, card, hands) => {
+    const game = invertPlayerHands({ player, card, hands });
 
     if (phase === "FIRST") {
       sendNextMoveFirstPhase({ game });
     } else if (phase === "SECOND") {
       let winner = "FIRST";
-      if (c.rank > currentCard.rank) {
-        winner = "SECOND";
-        if (secondPlayer) {
-          game.scores.player2.winFirst = game.matches === 0 ? true : false;
-          game.scores.player2.match++;
-        } else {
-          game.scores.player1.winFirst = game.matches === 0 ? true : false;
-          game.scores.player1.match++;
-        }
-      } else if (c.rank < currentCard.rank) {
-        if (secondPlayer) {
-          game.scores.player1.winFirst = game.matches === 0 ? true : false;
-          game.scores.player1.match++;
-        } else {
-          game.scores.player2.winFirst = game.matches === 0 ? true : false;
-          game.scores.player2.match++;
-        }
-      }
-      game.matches++;
-      sendNextMoveSecondPhase({ game, winner });
-      checkWinner(game);
+      updateScores({ card, winner, game });
     }
   };
 
@@ -206,7 +201,7 @@ export default function Game() {
             updateHand={updateHand}
             currentCard={currentCard}
             setCurrentCard={setCurrentCard}
-            updateScores={updateScores}
+            changePhase={changePhase}
           />
           <Hand cards={handPlayer()} currentMove={currentMove} />
         </>
