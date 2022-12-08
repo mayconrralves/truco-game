@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Card from "../Card";
+import { SendMessagetoServerContext } from "../SendMessagetoServerContext";
 import { StyleField } from "./styles";
 
 export default function Field({
@@ -12,7 +13,7 @@ export default function Field({
   phase,
 }) {
   const [currentCard, setCurrentCard] = useState(null);
-
+  const { winMatch } = useContext(SendMessagetoServerContext);
   useEffect(() => {
     if (stateGame?.field) {
       setCurrentCard(stateGame.field);
@@ -24,9 +25,11 @@ export default function Field({
   const checkWinner = (game) => {
     if (game.matches >= 2) {
       if (game.scores.player1.match > game.scores.player2.match) {
-        socket.emit("win_match", { game, winPlayer: "FIRST" });
+        winMatch && winMatch({ game, winPlayer: "FIRST" });
+        //socket.emit("win_match", { game, winPlayer: "FIRST" });
       } else if (game.scores.player2.match > game.scores.player1.match) {
-        socket.emit("win_match", { game, winPlayer: "SECOND" });
+        winMatch && winMatch({ game, winPlayer: "SECOND" });
+        //socket.emit("win_match", { game, winPlayer: "SECOND" });
       } else if (
         game.matches === 3 &&
         game.scores.player1.match === game.scores.player2.match
