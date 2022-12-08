@@ -85,8 +85,8 @@ export const buildDeck = () => {
   };
   const aux = ["ouros", "paus", "espadas", "copas"];
   const deckAux = [];
-  for (let naipe = 0; naipe < 2; naipe++) {
-    for (let number = 1; number <= 3; number++) {
+  for (let naipe = 0; naipe < 4; naipe++) {
+    for (let number = 1; number <= 13; number++) {
       if (number > 7 && number < 11) continue;
       else {
         const { name, rank } = returnRank(number, aux[naipe]);
