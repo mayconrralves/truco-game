@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { connect } from "react-redux";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "../AuthContext";
 import { GameContext } from "../GameContext";
@@ -6,15 +7,18 @@ import ListGames from "../ListGames";
 import ModalGame from "../ModalGame";
 import MyGame from "../MyGame";
 import { ConfigGameStyle } from "./styles";
-export default function ConfigGame() {
+export function ConfigGame({ uuid }) {
   const { user } = useContext(AuthContext);
-  const { socket, uuid, games, connection, startGame, updateList, myGame } =
+  const { socket, games, connection, startGame, updateList, myGame } =
     useContext(GameContext);
 
   const [loaded, setLoaded] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [nameRoom, setNameRoom] = useState(null);
   const history = useHistory();
+
+  console.log(uuid);
+
   useEffect(() => {
     if (connection && !loaded) {
       setLoaded(true);
@@ -96,3 +100,9 @@ export default function ConfigGame() {
     </ConfigGameStyle>
   );
 }
+
+const mapStates = (state) => state.createGame;
+
+const connectedConfigGameWithRedux = connect(mapStates, null)(ConfigGame);
+
+export default connectedConfigGameWithRedux;

@@ -5,6 +5,7 @@ import { ListGamesStyle } from "./styles";
 export default function ListGames({ games, update, joinGame }) {
   const printListGame = () => {
     return games.map((game, i) => {
+      console.log("game", game.room);
       return (
         <li key={"list_games " + i} id={game.room}>
           <p>

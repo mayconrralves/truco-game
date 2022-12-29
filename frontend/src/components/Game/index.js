@@ -9,14 +9,14 @@ import { buildDeck } from "../../utils";
 import { StyleGame } from "./styles";
 import ConfigModalGame from "../ConfigModalGame";
 import { SendMessagetoServerContext } from "../SendMessagetoServerContext";
+import { connect } from "react-redux";
 
-export default function Game() {
+export function Game({ uuid, coin: coinOpponent }) {
+  console.log("coin", coinOpponent);
   const {
-    uuid,
     setStartGame,
     setGoOutGame,
     socket,
-    coin: coinOpponent,
     secondPlayer,
     firstPlayer,
     stateGame,
@@ -169,7 +169,6 @@ export default function Game() {
       updateScores({ card, winner, game });
     }
   };
-
   return (
     <StyleGame>
       <ConfigModalGame
@@ -209,3 +208,16 @@ export default function Game() {
     </StyleGame>
   );
 }
+
+const mapStates = (state) => {
+  const { uuid } = state.createGame;
+  const { coin } = state.coinGame;
+  return {
+    uuid,
+    coin,
+  };
+};
+
+const connectedGameWithRedux = connect(mapStates, null)(Game);
+
+export default connectedGameWithRedux;
