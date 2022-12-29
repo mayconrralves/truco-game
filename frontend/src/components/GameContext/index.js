@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { connect } from "../../services/socket";
-import { connect as connectRedux } from "react-redux";
+import { connect as connectRedux, useDispatch } from "react-redux";
 import { addUuid, removeUuid } from "../../features/game/createGame";
 import { addCoin, removeCoin } from "../../features/coin/CoinSlice";
 
@@ -31,7 +31,7 @@ const INITIAL_STATE_GAME = {
   uuid: null,
 };
 
-export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
+export function Game({ children }) {
   const [socket, setSocket] = useState(null);
   const [connection, setConnection] = useState(false);
   const [games, setGames] = useState([]);
@@ -53,6 +53,7 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
   const [winGame, setWinGame] = useState(false);
   const [loseGame, setLoseGame] = useState(false);
   const [phase, setPhase] = useState("FIRST");
+  const dispatch = useDispatch();
 
   const startSocket = useCallback(() => {
     //events
@@ -64,11 +65,11 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       //game created
       connected.on("created_game", (data) => {
         setMyGame(data.game);
+        dispatch(addUuid({ uuid: data.room }));
         removeCoin();
         setShuffled(false);
         setStateGame(null);
         setCurrentMove(false);
-        addUuid({ uuid: data.room });
       });
       //game created by user another user
       connected.on("room_uuid", (game) => {
@@ -77,7 +78,7 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       //the user added to the room
       connected.on("success_join", (data) => {
         setPlayersJoin((playersJoin) => [...playersJoin, data]);
-        removeCoin();
+        dispatch(removeCoin());
       });
       connected.on("joined", (data) => {
         setPlayersJoin((playersJoin) => [...playersJoin, data]);
@@ -91,7 +92,7 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         setUpdateList(false);
       });
       connected.on("start_game", (data) => {
-        addUuid({ uuid: data.uuid });
+        dispatch(addUuid({ uuid: data.uuid }));
         setStartGame(true);
         setGoOutGame(false);
         setOtherGoOutPlayer(false);
@@ -105,14 +106,14 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         setStateGame(INITIAL_STATE_GAME);
       });
       connected.on("opponent_coin", (data) => {
-        addCoin({ coin: data.coin });
+        dispatch(addCoin({ coin: data.coin }));
       });
       connected.on("second_player", () => {
-        removeCoin();
+        dispatch(removeCoin());
         setSecondPlayer(true);
       });
       connected.on("winner_coin", () => {
-        removeCoin();
+        dispatch(removeCoin());
         setFirstPlayer(true);
         setCurrentMove(true);
         setPhase("FIRST");
@@ -124,16 +125,16 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         connected.emit("end_game", { uuid: data.uuid });
         setPlayersJoin([]);
         setUpdateList(true);
-        removeUuid();
-        removeCoin();
+        dispatch(removeUuid());
+        dispatch(removeCoin());
       });
       connected.on("end_game", () => {
         setPlayersJoin([]);
-        removeUuid();
+        dispatch(removeUuid());
         setUpdateList(true);
         setStartGame(false);
         setMyGame(null);
-        removeCoin();
+        dispatch(removeCoin());
         setShuffled(false);
         setStateGame(null);
       });
@@ -148,19 +149,19 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         setStartGame(false);
         setMyGame(null);
         setUpdateList(true);
-        removeCoin();
+        dispatch(removeCoin());
         setShuffled(false);
         setStateGame(null);
         setCurrentMove(false);
       });
       connected.on("game_cancelled", () => {
         setUpdateList(true);
-        removeCoin();
+        dispatch(removeCoin());
         setShuffled(false);
         setStateGame(null);
       });
       connected.on("success_cancelled", () => {
-        removeUuid();
+        dispatch(removeUuid());
         setMyGame(null);
         setUpdateList(true);
         removeCoin();
@@ -269,7 +270,7 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       });
       setSocket(connected);
     }
-  }, [socket]);
+  }, [socket, dispatch]);
   useEffect(() => {
     startSocket();
   }, [startSocket]);
