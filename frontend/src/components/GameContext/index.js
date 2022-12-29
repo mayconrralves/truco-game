@@ -33,7 +33,6 @@ const INITIAL_STATE_GAME = {
 
 export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
   const [socket, setSocket] = useState(null);
-  const [uuid, setUuid] = useState(null);
   const [connection, setConnection] = useState(false);
   const [games, setGames] = useState([]);
   const [playersJoin, setPlayersJoin] = useState([]);
@@ -43,7 +42,6 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
   const [userGoOut, setUserGoOut] = useState(null);
   const [updateList, setUpdateList] = useState(false);
   const [myGame, setMyGame] = useState(null);
-  const [coin, setCoin] = useState(null);
   const [firstPlayer, setFirstPlayer] = useState(false);
   const [secondPlayer, setSecondPlayer] = useState(false);
   const [shuffed, setShuffled] = useState(false);
@@ -65,11 +63,8 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       });
       //game created
       connected.on("created_game", (data) => {
-        //setUuid(data.room);
-        console.log("Created game");
         setMyGame(data.game);
         removeCoin();
-        //setCoin(null);
         setShuffled(false);
         setStateGame(null);
         setCurrentMove(false);
@@ -82,7 +77,6 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       //the user added to the room
       connected.on("success_join", (data) => {
         setPlayersJoin((playersJoin) => [...playersJoin, data]);
-        //setCoin(null);
         removeCoin();
       });
       connected.on("joined", (data) => {
@@ -97,7 +91,6 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         setUpdateList(false);
       });
       connected.on("start_game", (data) => {
-        //setUuid(data.uuid);
         addUuid({ uuid: data.uuid });
         setStartGame(true);
         setGoOutGame(false);
@@ -112,16 +105,13 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         setStateGame(INITIAL_STATE_GAME);
       });
       connected.on("opponent_coin", (data) => {
-        //setCoin(data.coin);
         addCoin({ coin: data.coin });
       });
       connected.on("second_player", () => {
-        //setCoin(null);
         removeCoin();
         setSecondPlayer(true);
       });
       connected.on("winner_coin", () => {
-        //setCoin(null);
         removeCoin();
         setFirstPlayer(true);
         setCurrentMove(true);
@@ -134,20 +124,16 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
         connected.emit("end_game", { uuid: data.uuid });
         setPlayersJoin([]);
         setUpdateList(true);
-        //setUuid(null);
         removeUuid();
         removeCoin();
-        //setCoin(null);
       });
       connected.on("end_game", () => {
         setPlayersJoin([]);
-        //setUuid(null);
         removeUuid();
         setUpdateList(true);
         setStartGame(false);
         setMyGame(null);
         removeCoin();
-        //setCoin(null);
         setShuffled(false);
         setStateGame(null);
       });
@@ -159,30 +145,24 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
       });
       //updated list of rooms when a user closed your session
       connected.on("removed_uuid", () => {
-        //setUuid(null);
-        //removeUuid();
         setStartGame(false);
         setMyGame(null);
         setUpdateList(true);
         removeCoin();
-        //setCoin(null);
         setShuffled(false);
         setStateGame(null);
         setCurrentMove(false);
       });
       connected.on("game_cancelled", () => {
         setUpdateList(true);
-        //setCoin(null);
         removeCoin();
         setShuffled(false);
         setStateGame(null);
       });
       connected.on("success_cancelled", () => {
-        //setUuid(null);
         removeUuid();
         setMyGame(null);
         setUpdateList(true);
-        //setCoin(null);
         removeCoin();
         setShuffled(false);
         setStateGame(null);
@@ -295,7 +275,6 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
   }, [startSocket]);
   const values = {
     socket,
-    uuid,
     games,
     connection,
     playersJoin,
@@ -305,7 +284,6 @@ export function Game({ children, addUuid, removeUuid, addCoin, removeCoin }) {
     userGoOut,
     updateList,
     myGame,
-    coin,
     firstPlayer,
     secondPlayer,
     shuffed,
